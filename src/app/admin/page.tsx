@@ -92,7 +92,6 @@ export default function AdminDashboard() {
       activeSites: uniqueSites
     });
 
-    // Timeline
     const timelineMap: any = {};
     data.forEach(log => {
       const date = new Date(log.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -105,7 +104,6 @@ export default function AdminDashboard() {
     })).reverse();
     setTimelineData(timelineArray);
 
-    // Leaderboard
     const siteMap: any = {};
     data.forEach(log => {
       const site = log.location || 'Unknown';
@@ -163,13 +161,12 @@ export default function AdminDashboard() {
       body: tableRows,
       startY: 40,
       theme: 'grid',
-      headStyles: { fillColor: [59, 130, 246] } // Professional Blue
+      headStyles: { fillColor: [59, 130, 246] }
     });
     doc.save("true608_report.pdf");
   }
 
   return (
-    // THEME: ENTERPRISE DARK
     <main className="min-h-screen bg-[#0F1117] text-slate-300 p-4 md:p-8 font-sans">
       
       {/* HEADER */}
@@ -199,10 +196,11 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* KPI CARDS - CLEAN & MINIMAL */}
+      {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
+        {/* Added cursor-default to prevent text selection cursor */}
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300 cursor-default">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Volume</p>
             <Database className="w-4 h-4 text-blue-500" />
@@ -210,7 +208,7 @@ export default function AdminDashboard() {
           <h3 className="text-3xl font-bold text-white">{stats.totalGas} <span className="text-sm text-slate-500 font-normal">lbs</span></h3>
         </div>
 
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300 cursor-default">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Entries</p>
             <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -218,7 +216,7 @@ export default function AdminDashboard() {
           <h3 className="text-3xl font-bold text-white">{stats.totalEntries}</h3>
         </div>
 
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300 cursor-default">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Active Sites</p>
             <Map className="w-4 h-4 text-purple-500" />
@@ -270,7 +268,6 @@ export default function AdminDashboard() {
                   <span className="text-sm font-medium text-slate-300 truncate w-32">{site.name}</span>
                   <span className="text-xs font-bold text-slate-400">{site.amount} lbs</span>
                 </div>
-                {/* Clean Progress Bar */}
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-600 rounded-full" 
@@ -315,7 +312,7 @@ export default function AdminDashboard() {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
+                <tr key={log.id} className="hover:bg-slate-800/50 transition-colors cursor-default"> {/* Cursor default on row */}
                   <td className="px-6 py-4"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div></td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">
                     {new Date(log.created_at).toLocaleDateString()}
