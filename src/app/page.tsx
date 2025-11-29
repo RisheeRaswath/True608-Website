@@ -17,26 +17,20 @@ export default function Home() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- THE NAVIGATION LOGIC ---
   const handleEnter = (e: React.KeyboardEvent, nextId: string) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Stop everything
-      
+      e.preventDefault();
       if (nextId === "SUBMIT") {
-        handleSave(); // Trigger Save
+        handleSave();
       } else {
-        // Find next box and force focus
-        const nextBox = document.getElementById(nextId);
-        if (nextBox) {
-          nextBox.focus();
-        }
+        document.getElementById(nextId)?.focus();
       }
     }
   };
 
   const handleSave = async () => {
     if (!formData.location || !formData.unit_id || !formData.amount) {
-      toast.error("Missing Data: Please fill all fields."); 
+      toast.error("Required: Please complete all fields."); 
       return;
     }
 
@@ -44,24 +38,20 @@ export default function Home() {
 
     const { error } = await supabase
       .from("logs")
-      .insert([
-        {
+      .insert([{
           location: formData.location,
           unit_id: formData.unit_id,
           refrigerant: formData.refrigerant,
           amount: parseFloat(formData.amount),
-        },
-      ]);
+        }]);
 
     setLoading(false);
 
     if (error) {
-      console.error("Supabase Error:", error);
-      toast.error("Database Connection Failed."); 
+      toast.error("Connection Failed. Try again."); 
     } else {
-      toast.success("Log Entry Secured."); 
+      toast.success("Entry Logged Successfully."); 
       setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      // Reset focus to start
       document.getElementById("field-1")?.focus();
     }
   };
@@ -69,63 +59,56 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white p-6 flex flex-col items-center">
       
-      <div className="w-full max-w-md mb-8 mt-10">
-        <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-          True608 Systems (V5)
+      <div className="w-full max-w-md mb-8 mt-12 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">
+          True<span className="text-blue-500">608</span>
         </h1>
-        <p className="text-gray-500 text-sm">EPA Section 608 Compliance Log</p>
+        <div className="h-1 w-12 bg-blue-500 mx-auto rounded-full mb-4"></div>
+        <p className="text-gray-500 text-sm font-medium uppercase tracking-widest">Compliance Operating System</p>
       </div>
 
-      {/* CHANGED: Removed <form>, used <div> to stop auto-submit behavior */}
-      <div className="w-full max-w-md space-y-5">
+      <div className="w-full max-w-md space-y-6">
         
-        {/* Field 1: Location */}
         <div>
-          <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Job Location</label>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Job Site Location</label>
           <input 
             id="field-1"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            // Logic: Enter -> Go to Field 2
             onKeyDown={(e) => handleEnter(e, "field-2")}
             type="text" 
             enterKeyHint="next" 
-            placeholder="e.g. Pizza Hut, Main St"
-            className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
+            placeholder="e.g. 123 Main St, Server Room"
+            className="w-full bg-[#0a0a0a] focus:bg-[#111] border border-gray-800 focus:border-blue-500 rounded-xl p-4 text-white outline-none transition-all duration-200 shadow-sm"
           />
         </div>
 
-        {/* Field 2: Unit ID */}
         <div>
-          <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Unit ID</label>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Equipment ID</label>
           <input 
             id="field-2"
             name="unit_id"
             value={formData.unit_id}
             onChange={handleChange}
-            // Logic: Enter -> Go to Field 3
             onKeyDown={(e) => handleEnter(e, "field-3")}
             type="text" 
             enterKeyHint="next"
-            placeholder="e.g. RTU-04"
-            className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
+            placeholder="e.g. RTU-04 / AHU-02"
+            className="w-full bg-[#0a0a0a] focus:bg-[#111] border border-gray-800 focus:border-blue-500 rounded-xl p-4 text-white outline-none transition-all duration-200 shadow-sm"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          
-          {/* Field 3: Gas Type */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Refrigerant</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Refrigerant</label>
             <select 
               id="field-3"
               name="refrigerant"
               value={formData.refrigerant}
               onChange={handleChange}
-              // Logic: Enter -> Go to Field 4
               onKeyDown={(e) => handleEnter(e, "field-4")}
-              className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200 cursor-pointer"
+              className="w-full bg-[#0a0a0a] focus:bg-[#111] border border-gray-800 focus:border-blue-500 rounded-xl p-4 text-white outline-none transition-all duration-200 cursor-pointer appearance-none"
             >
               <option>R-410A</option>
               <option>R-22</option>
@@ -133,35 +116,31 @@ export default function Home() {
               <option>R-134a</option>
             </select>
           </div>
-
-          {/* Field 4: Amount */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Amount (lbs)</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Lbs Added</label>
             <input 
               id="field-4"
               name="amount"
               value={formData.amount}
               onChange={handleChange}
-              // Logic: Enter -> SUBMIT
               onKeyDown={(e) => handleEnter(e, "SUBMIT")}
               type="number" 
               step="0.1"
               min="0"
               enterKeyHint="done"
               placeholder="0.0"
-              className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
+              className="w-full bg-[#0a0a0a] focus:bg-[#111] border border-gray-800 focus:border-blue-500 rounded-xl p-4 text-white outline-none transition-all duration-200 shadow-sm"
             />
           </div>
         </div>
 
-        {/* Action Button - Type is BUTTON (Not Submit) */}
         <button 
           onClick={handleSave}
           disabled={loading}
           type="button" 
-          className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-bold py-4 rounded-lg mt-6 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
+          className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 disabled:text-gray-500 text-white font-bold py-4 rounded-xl mt-8 transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 text-sm tracking-wide"
         >
-          {loading ? "SAVING..." : "SAVE LOG ENTRY"}
+          {loading ? "PROCESSING..." : "SECURE LOG ENTRY"}
         </button>
 
       </div>
