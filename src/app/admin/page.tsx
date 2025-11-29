@@ -172,11 +172,12 @@ export default function AdminDashboard() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         <div>
+          {/* UPDATED TITLE: True608 Systems (With Space) */}
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <LayoutDashboard className="w-6 h-6 text-blue-500" />
             True<span className="text-blue-500">608</span> Systems
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Enterprise Compliance Dashboard</p>
+          <p className="text-slate-500 text-sm mt-1 ml-8">Admin Dashboard</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
@@ -199,7 +200,6 @@ export default function AdminDashboard() {
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         
-        {/* Added cursor-default to prevent text selection cursor */}
         <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300 cursor-default">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Volume</p>
@@ -268,6 +268,7 @@ export default function AdminDashboard() {
                   <span className="text-sm font-medium text-slate-300 truncate w-32">{site.name}</span>
                   <span className="text-xs font-bold text-slate-400">{site.amount} lbs</span>
                 </div>
+                {/* Clean Progress Bar */}
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-600 rounded-full" 
@@ -312,7 +313,7 @@ export default function AdminDashboard() {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/50 transition-colors cursor-default"> {/* Cursor default on row */}
+                <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
                   <td className="px-6 py-4"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div></td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">
                     {new Date(log.created_at).toLocaleDateString()}
