@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react"; 
+import { useState, useRef } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
 
@@ -13,13 +13,27 @@ export default function Home() {
     amount: "",
   });
 
+  // 1. RE-INTRODUCE REFS (Targets)
+  const locRef = useRef<HTMLInputElement>(null);
+  const unitRef = useRef<HTMLInputElement>(null);
+  const gasRef = useRef<HTMLSelectElement>(null);
+  const amtRef = useRef<HTMLInputElement>(null);
+  // We don't need a submit ref because the form handles the final enter
+
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // UPDATED: This now handles the form submission natively
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault(); // Stop the page from reloading
+  // 2. THE INTERCEPTOR (For Desktop)
+  const handleKeyDown = (e: React.KeyboardEvent, nextRef: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // STOP the browser from Submitting
+      nextRef?.current?.focus(); // MOVE the cursor manually
+    }
+  };
+
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault(); // Stop reload
 
     if (!formData.location || !formData.unit_id || !formData.amount) {
       toast.error("Missing Data: Please fill all fields."); 
@@ -47,10 +61,8 @@ export default function Home() {
     } else {
       toast.success("Log Entry Secured."); 
       setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      
-      // Optional: Focus back on the first box manually if needed, 
-      // but usually the user wants to see the success message first.
-      // (document.getElementsByName('location')[0] as HTMLInputElement)?.focus();
+      // Reset focus to start
+      locRef.current?.focus();
     }
   };
 
@@ -64,18 +76,21 @@ export default function Home() {
         <p className="text-gray-500 text-sm">EPA Section 608 Compliance Log</p>
       </div>
 
-      {/* WRAPPED IN FORM TAG - This enables the "Next" button on mobile keyboards */}
+      {/* FORM TAG KEEPS MOBILE HAPPY */}
       <form onSubmit={handleSave} className="w-full max-w-md space-y-5">
         
         {/* Field 1: Location */}
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Job Location</label>
           <input 
+            ref={locRef}
             name="location"
             value={formData.location}
             onChange={handleChange}
-            type="text"
-            enterKeyHint="next" // <--- TELLS PHONE TO SHOW "NEXT" BUTTON
+            // DESKTOP LOGIC: Press Enter -> Go to Unit
+            onKeyDown={(e) => handleKeyDown(e, unitRef)}
+            type="text" 
+            enterKeyHint="next" // MOBILE LOGIC
             placeholder="e.g. Pizza Hut, Main St"
             className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
           />
@@ -85,11 +100,14 @@ export default function Home() {
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Unit ID</label>
           <input 
+            ref={unitRef}
             name="unit_id"
             value={formData.unit_id}
             onChange={handleChange}
+            // DESKTOP LOGIC: Press Enter -> Go to Gas
+            onKeyDown={(e) => handleKeyDown(e, gasRef)}
             type="text" 
-            enterKeyHint="next" // <--- TELLS PHONE TO SHOW "NEXT" BUTTON
+            enterKeyHint="next"
             placeholder="e.g. RTU-04"
             className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
           />
@@ -101,9 +119,12 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Refrigerant</label>
             <select 
+              ref={gasRef}
               name="refrigerant"
               value={formData.refrigerant}
               onChange={handleChange}
+              // DESKTOP LOGIC: Press Enter -> Go to Amount
+              onKeyDown={(e) => handleKeyDown(e, amtRef)}
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200 cursor-pointer"
             >
               <option>R-410A</option>
@@ -117,14 +138,18 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Amount (lbs)</label>
             <input 
+              ref={amtRef}
               name="amount"
               value={formData.amount}
               onChange={handleChange}
               type="number" 
               step="0.1"
               min="0"
-              enterKeyHint="done" // <--- TELLS PHONE TO SHOW "GO/DONE" BUTTON
+              enterKeyHint="done"
               placeholder="0.0"
+              // WE DO NOT ADD onKeyDown HERE.
+              // Why? Because on the last field, "Enter" SHOULD submit the form.
+              // The <form> tag handles that automatically.
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
             />
           </div>
@@ -132,7 +157,7 @@ export default function Home() {
 
         {/* Action Button */}
         <button 
-          type="submit" // <--- THIS MAKES THE "ENTER" KEY CLICK THE BUTTON AUTOMATICALLY
+          type="submit"
           disabled={loading}
           className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-bold py-4 rounded-lg mt-6 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
         >
