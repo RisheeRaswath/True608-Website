@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react"; 
+import { useState } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
 
@@ -13,29 +13,14 @@ export default function Home() {
     amount: "",
   });
 
-  // 1. CREATE TARGETS FOR FOCUS
-  const locRef = useRef<HTMLInputElement>(null);
-  const unitRef = useRef<HTMLInputElement>(null);
-  const gasRef = useRef<HTMLSelectElement>(null);
-  const amtRef = useRef<HTMLInputElement>(null);
-
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 2. THE LOGIC: IF ENTER IS PRESSED, GO TO NEXT
-  const handleEnter = (e: React.KeyboardEvent, nextRef: any, isSubmit = false) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Stop default browser behavior
-      if (isSubmit) {
-        handleSave(); // Last box triggers Save
-      } else {
-        nextRef.current?.focus(); // Other boxes jump to next
-      }
-    }
-  };
+  // UPDATED: This now handles the form submission natively
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault(); // Stop the page from reloading
 
-  const handleSave = async () => {
     if (!formData.location || !formData.unit_id || !formData.amount) {
       toast.error("Missing Data: Please fill all fields."); 
       return;
@@ -62,8 +47,10 @@ export default function Home() {
     } else {
       toast.success("Log Entry Secured."); 
       setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      // Reset cursor to the first box so you can keep typing fast
-      locRef.current?.focus();
+      
+      // Optional: Focus back on the first box manually if needed, 
+      // but usually the user wants to see the success message first.
+      // (document.getElementsByName('location')[0] as HTMLInputElement)?.focus();
     }
   };
 
@@ -77,19 +64,18 @@ export default function Home() {
         <p className="text-gray-500 text-sm">EPA Section 608 Compliance Log</p>
       </div>
 
-      <div className="w-full max-w-md space-y-5">
+      {/* WRAPPED IN FORM TAG - This enables the "Next" button on mobile keyboards */}
+      <form onSubmit={handleSave} className="w-full max-w-md space-y-5">
         
         {/* Field 1: Location */}
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Job Location</label>
           <input 
-            ref={locRef}
             name="location"
-            // WHEN ENTER PRESSED -> GO TO UNIT
-            onKeyDown={(e) => handleEnter(e, unitRef)}
             value={formData.location}
             onChange={handleChange}
-            type="text" 
+            type="text"
+            enterKeyHint="next" // <--- TELLS PHONE TO SHOW "NEXT" BUTTON
             placeholder="e.g. Pizza Hut, Main St"
             className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
           />
@@ -99,13 +85,11 @@ export default function Home() {
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Unit ID</label>
           <input 
-            ref={unitRef}
             name="unit_id"
-            // WHEN ENTER PRESSED -> GO TO GAS
-            onKeyDown={(e) => handleEnter(e, gasRef)}
             value={formData.unit_id}
             onChange={handleChange}
             type="text" 
+            enterKeyHint="next" // <--- TELLS PHONE TO SHOW "NEXT" BUTTON
             placeholder="e.g. RTU-04"
             className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
           />
@@ -117,10 +101,7 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Refrigerant</label>
             <select 
-              ref={gasRef}
               name="refrigerant"
-              // WHEN ENTER PRESSED -> GO TO AMOUNT
-              onKeyDown={(e) => handleEnter(e, amtRef)}
               value={formData.refrigerant}
               onChange={handleChange}
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200 cursor-pointer"
@@ -136,15 +117,13 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Amount (lbs)</label>
             <input 
-              ref={amtRef}
               name="amount"
-              // WHEN ENTER PRESSED -> TRIGGER SAVE!
-              onKeyDown={(e) => handleEnter(e, null, true)}
               value={formData.amount}
               onChange={handleChange}
               type="number" 
               step="0.1"
               min="0"
+              enterKeyHint="done" // <--- TELLS PHONE TO SHOW "GO/DONE" BUTTON
               placeholder="0.0"
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
             />
@@ -153,14 +132,14 @@ export default function Home() {
 
         {/* Action Button */}
         <button 
-          onClick={handleSave}
+          type="submit" // <--- THIS MAKES THE "ENTER" KEY CLICK THE BUTTON AUTOMATICALLY
           disabled={loading}
           className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-bold py-4 rounded-lg mt-6 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
         >
           {loading ? "SAVING..." : "SAVE LOG ENTRY"}
         </button>
 
-      </div>
+      </form>
     </main>
   );
 }
