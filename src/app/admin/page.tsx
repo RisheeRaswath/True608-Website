@@ -7,7 +7,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { 
-  Map, MapPin, Trash2, RefreshCw, 
+  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
@@ -172,14 +172,20 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - TEXT ONLY */}
-        <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
-                True<span className="text-blue-500">608</span> Systems
-            </h1>
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1.5">
-                Admin Dashboard
-            </p>
+        {/* BRANDING BLOCK */}
+        <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+            </div>
+            
+            <div className="flex flex-col">
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
+                    True<span className="text-blue-500">608</span>
+                </h1>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1.5">
+                    Admin Dashboard
+                </p>
+            </div>
         </div>
         
         {/* ACTION BUTTONS */}
@@ -231,7 +237,6 @@ export default function AdminDashboard() {
       {/* VISUAL ANALYTICS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         
-        {/* CHART: TIMELINE */}
         <div className="lg:col-span-2 bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px]">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-slate-500" />
@@ -257,7 +262,6 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* LIST: LEADERBOARD */}
         <div className="bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px] overflow-y-auto custom-scrollbar">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-slate-500" />
@@ -293,7 +297,6 @@ export default function AdminDashboard() {
         <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#1A1D24]/50">
            <h3 className="text-slate-200 font-semibold text-sm">Recent Activity</h3>
            <div className="flex items-center gap-2">
-             {/* RED PULSING DOT FOR LIVE STATUS */}
              <span className="relative flex h-2 w-2">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
@@ -318,7 +321,6 @@ export default function AdminDashboard() {
               {logs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
                   <td className="px-6 py-4">
-                    {/* RED DOT FOR ROWS */}
                     <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                   </td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">
@@ -326,10 +328,9 @@ export default function AdminDashboard() {
                   </td>
                   <td className="px-6 py-4 text-slate-300 font-medium">{log.location}</td>
                   <td className="px-6 py-4 font-mono text-slate-500">{log.unit_id}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded text-[10px] font-medium bg-slate-800 text-slate-400 border border-slate-700">
-                      {log.refrigerant}
-                    </span>
+                  {/* CLEAN TEXT REFRIGERANT (No Boxes) */}
+                  <td className="px-6 py-4 text-slate-400 font-medium">
+                    {log.refrigerant}
                   </td>
                   <td className="px-6 py-4 font-mono text-white font-semibold">{log.amount}</td>
                   <td className="px-6 py-4 text-right">
