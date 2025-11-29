@@ -2,12 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  PieChart, Pie, Cell, AreaChart, Area 
+} from 'recharts';
+import { 
+  Activity, Droplets, MapPin, Trash2, RefreshCw, 
+  TrendingUp, AlertCircle 
+} from 'lucide-react';
+
+// COLORS FOR THE CHARTS
+const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 
 export default function AdminDashboard() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // STATS STATE
+  // CHART DATA STATES
+  const [gasData, setGasData] = useState<any[]>([]);
+  const [locationData, setLocationData] = useState<any[]>([]);
+  
+  // KPI STATS
   const [stats, setStats] = useState({
     totalEntries: 0,
     totalGas: 0,
@@ -25,140 +40,228 @@ export default function AdminDashboard() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching logs:", error);
-    } else {
-      const logData = data || [];
-      setLogs(logData);
-      
-      // CALCULATE REAL-TIME STATS
-      const totalGas = logData.reduce((sum: number, log: any) => sum + (log.amount || 0), 0);
-      const uniqueSites = new Set(logData.map((log: any) => log.location)).size;
-      
-      setStats({
-        totalEntries: logData.length,
-        totalGas: Math.round(totalGas * 10) / 10, // Round to 1 decimal
-        activeSites: uniqueSites
-      });
+    if (!error && data) {
+      setLogs(data);
+      processAnalytics(data);
     }
     setLoading(false);
   }
 
+  // THE BRAIN: CONVERT RAW LOGS INTO GRAPHS
+  function processAnalytics(data: any[]) {
+    // 1. Calculate KPIs
+    const totalGas = data.reduce((sum, log) => sum + (log.amount || 0), 0);
+    const uniqueSites = new Set(data.map(log => log.location)).size;
+    
+    setStats({
+      totalEntries: data.length,
+      totalGas: Math.round(totalGas * 10) / 10,
+      activeSites: uniqueSites
+    });
+
+    // 2. Prepare Bar Chart Data (Gas Usage by Type)
+    const gasMap: any = {};
+    data.forEach(log => {
+      const gas = log.refrigerant || 'Unknown';
+      if (!gasMap[gas]) gasMap[gas] = 0;
+      gasMap[gas] += log.amount;
+    });
+    const processedGas = Object.keys(gasMap).map(key => ({
+      name: key,
+      amount: Math.round(gasMap[key] * 10) / 10
+    }));
+    setGasData(processedGas);
+
+    // 3. Prepare Pie Chart Data (Activity by Location)
+    const locMap: any = {};
+    data.forEach(log => {
+      const loc = log.location || 'Unknown';
+      if (!locMap[loc]) locMap[loc] = 0;
+      locMap[loc] += 1;
+    });
+    const processedLoc = Object.keys(locMap).map(key => ({
+      name: key,
+      value: locMap[key]
+    })).slice(0, 5); // Top 5 sites only
+    setLocationData(processedLoc);
+  }
+
   async function deleteLog(id: number) {
-    if (!window.confirm("Delete this entry?")) return;
+    if (!window.confirm("CONFIRM DELETION: This cannot be undone.")) return;
     await supabase.from("logs").delete().eq("id", id);
-    fetchLogs(); // Refresh data
+    fetchLogs();
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white p-8 font-sans">
+    <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans">
       
-      {/* 1. TOP BAR */}
-      <div className="flex justify-between items-end mb-10">
+      {/* --- HEADER --- */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-900 pb-6 gap-4">
         <div>
-          <h2 className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-1">True608 Systems</h2>
-          <h1 className="text-4xl font-bold text-white">Command Center</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <Activity className="text-blue-500 w-4 h-4" />
+            <h2 className="text-blue-500 text-xs uppercase tracking-widest font-bold">True608 Intelligence</h2>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Executive Dashboard</h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
-          <span className="text-emerald-500 text-sm font-medium">System Operational</span>
-        </div>
-      </div>
-
-      {/* 2. KPI CARDS (The Executive View) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         
-        {/* Card 1: Total Entries */}
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <svg className="w-16 h-16 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /></svg>
+        <button 
+          onClick={() => fetchLogs()} 
+          className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 px-4 py-2 rounded-lg text-sm transition-all"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          Sync Data
+        </button>
+      </div>
+
+      {/* --- KPI CARDS --- */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl relative group hover:border-blue-500/30 transition-all">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-gray-500 text-sm font-medium">Total Volume</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{stats.totalGas} <span className="text-lg text-gray-600">lbs</span></h3>
+            </div>
+            <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500"><Droplets className="w-6 h-6" /></div>
           </div>
-          <p className="text-gray-400 text-sm font-medium mb-1">Total Logs</p>
-          <h3 className="text-4xl font-bold text-white">{stats.totalEntries}</h3>
-          <p className="text-blue-400 text-xs mt-2 font-medium">+12% from last month</p>
+          <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+            <div className="bg-blue-500 h-full w-[70%]"></div>
+          </div>
         </div>
 
-        {/* Card 2: Gas Usage (The Money Stat) */}
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <svg className="w-16 h-16 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
+        <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl relative group hover:border-emerald-500/30 transition-all">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-gray-500 text-sm font-medium">Log Entries</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{stats.totalEntries}</h3>
+            </div>
+            <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><TrendingUp className="w-6 h-6" /></div>
           </div>
-          <p className="text-gray-400 text-sm font-medium mb-1">Refrigerant Tracked</p>
-          <div className="flex items-end gap-2">
-            <h3 className="text-4xl font-bold text-white">{stats.totalGas}</h3>
-            <span className="text-gray-500 mb-1">lbs</span>
+          <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+            <div className="bg-emerald-500 h-full w-[45%]"></div>
           </div>
-          <p className="text-emerald-400 text-xs mt-2 font-medium">Compliance Active</p>
         </div>
 
-        {/* Card 3: Active Sites */}
-        <div className="bg-gray-900/50 border border-gray-800 p-6 rounded-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <svg className="w-16 h-16 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+        <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl relative group hover:border-purple-500/30 transition-all">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-gray-500 text-sm font-medium">Active Job Sites</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{stats.activeSites}</h3>
+            </div>
+            <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500"><MapPin className="w-6 h-6" /></div>
           </div>
-          <p className="text-gray-400 text-sm font-medium mb-1">Active Job Sites</p>
-          <h3 className="text-4xl font-bold text-white">{stats.activeSites}</h3>
-          <p className="text-purple-400 text-xs mt-2 font-medium">Global Coverage</p>
+          <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+            <div className="bg-purple-500 h-full w-[80%]"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* --- VISUAL ANALYTICS (GRAPHS) --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        {/* CHART 1: GAS USAGE */}
+        <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl">
+          <h3 className="text-gray-200 font-semibold mb-6 flex items-center gap-2">
+            <span className="w-2 h-6 bg-emerald-500 rounded-sm"></span>
+            Refrigerant Consumption (lbs)
+          </h3>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={gasData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                <XAxis dataKey="name" stroke="#666" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#666" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#111', border: '1px solid #333', borderRadius: '8px' }}
+                  itemStyle={{ color: '#fff' }}
+                />
+                <Bar dataKey="amount" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* CHART 2: LOCATION DISTRIBUTION */}
+        <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl">
+          <h3 className="text-gray-200 font-semibold mb-6 flex items-center gap-2">
+            <span className="w-2 h-6 bg-blue-500 rounded-sm"></span>
+            Site Distribution
+          </h3>
+          <div className="h-[250px] w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={locationData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {locationData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#111', border: '1px solid #333', borderRadius: '8px' }}
+                  itemStyle={{ color: '#fff' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex justify-center gap-4 mt-2">
+             {locationData.map((entry, index) => (
+               <div key={index} className="flex items-center gap-2 text-xs text-gray-400">
+                 <div className="w-2 h-2 rounded-full" style={{backgroundColor: COLORS[index % COLORS.length]}}></div>
+                 {entry.name}
+               </div>
+             ))}
+          </div>
         </div>
 
       </div>
 
-      {/* 3. THE DATA TABLE */}
-      <div className="bg-gray-900/30 border border-gray-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-        <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
-          <h3 className="font-semibold text-gray-200">Recent Activity Feed</h3>
-          <button onClick={() => fetchLogs()} className="text-xs text-blue-400 hover:text-blue-300">Refresh Data</button>
+      {/* --- MASTER LOG TABLE --- */}
+      <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-800">
+           <h3 className="text-gray-200 font-semibold">Live Data Feed</h3>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-400">
-            <thead className="bg-white/5 uppercase text-xs tracking-wider font-semibold text-gray-300">
+            <thead className="bg-black/40 uppercase text-xs tracking-wider font-semibold text-gray-500">
               <tr>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Time</th>
+                <th className="px-6 py-4">Timestamp</th>
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Unit ID</th>
                 <th className="px-6 py-4">Gas Type</th>
                 <th className="px-6 py-4">Amount</th>
-                <th className="px-6 py-4 text-right">Action</th>
+                <th className="px-6 py-4 text-right">Manage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/50">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-white/5 transition-colors group">
+                <tr key={log.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4">
-                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-900/30 text-emerald-400 border border-emerald-900/50">
-                       LOGGED
-                     </span>
+                     <span className="flex h-2 w-2 rounded-full bg-emerald-500"></span>
                   </td>
-                  <td className="px-6 py-4 font-mono text-xs text-gray-500">
-                    {new Date(log.created_at).toLocaleDateString()} <span className="text-gray-600">{new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                  <td className="px-6 py-4 font-mono text-xs">
+                    {new Date(log.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 font-medium text-white">{log.location}</td>
                   <td className="px-6 py-4 text-gray-300">{log.unit_id}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${log.refrigerant.includes('410') ? 'bg-pink-500' : 'bg-blue-500'}`}></div>
-                      {log.refrigerant}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-mono text-white">{log.amount} lbs</td>
-                  <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => deleteLog(log.id)} className="text-red-500 hover:text-red-400 text-xs font-medium">Delete</button>
+                  <td className="px-6 py-4 text-blue-400">{log.refrigerant}</td>
+                  <td className="px-6 py-4 font-bold text-white">{log.amount} lbs</td>
+                  <td className="px-6 py-4 text-right">
+                    <button onClick={() => deleteLog(log.id)} className="text-gray-600 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          
           {logs.length === 0 && (
-            <div className="p-12 text-center">
-              <p className="text-gray-600">No data streams detected.</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-    </main>
-  );
-}
+            <div className="p-12 text-center text-gray-600 flex flex-col items-center">
+              <AlertCircle
