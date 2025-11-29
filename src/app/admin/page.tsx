@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+// If the line above gives an error, use: import { supabase } from "../../lib/supabase";
+
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, AreaChart, Area 
+  PieChart, Pie, Cell 
 } from 'recharts';
 import { 
   Activity, Droplets, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle 
 } from 'lucide-react';
 
-// COLORS FOR THE CHARTS
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 
 export default function AdminDashboard() {
@@ -47,7 +48,6 @@ export default function AdminDashboard() {
     setLoading(false);
   }
 
-  // THE BRAIN: CONVERT RAW LOGS INTO GRAPHS
   function processAnalytics(data: any[]) {
     // 1. Calculate KPIs
     const totalGas = data.reduce((sum, log) => sum + (log.amount || 0), 0);
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       activeSites: uniqueSites
     });
 
-    // 2. Prepare Bar Chart Data (Gas Usage by Type)
+    // 2. Prepare Bar Chart Data
     const gasMap: any = {};
     data.forEach(log => {
       const gas = log.refrigerant || 'Unknown';
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     }));
     setGasData(processedGas);
 
-    // 3. Prepare Pie Chart Data (Activity by Location)
+    // 3. Prepare Pie Chart Data
     const locMap: any = {};
     data.forEach(log => {
       const loc = log.location || 'Unknown';
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
     const processedLoc = Object.keys(locMap).map(key => ({
       name: key,
       value: locMap[key]
-    })).slice(0, 5); // Top 5 sites only
+    })).slice(0, 5); 
     setLocationData(processedLoc);
   }
 
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
   return (
     <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans">
       
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-gray-900 pb-6 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
         </button>
       </div>
 
-      {/* --- KPI CARDS --- */}
+      {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
         <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl relative group hover:border-blue-500/30 transition-all">
           <div className="flex justify-between items-start mb-4">
@@ -156,10 +156,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* --- VISUAL ANALYTICS (GRAPHS) --- */}
+      {/* CHARTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        
-        {/* CHART 1: GAS USAGE */}
         <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl">
           <h3 className="text-gray-200 font-semibold mb-6 flex items-center gap-2">
             <span className="w-2 h-6 bg-emerald-500 rounded-sm"></span>
@@ -181,7 +179,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* CHART 2: LOCATION DISTRIBUTION */}
         <div className="bg-[#0f0f0f] border border-gray-800 p-6 rounded-xl">
           <h3 className="text-gray-200 font-semibold mb-6 flex items-center gap-2">
             <span className="w-2 h-6 bg-blue-500 rounded-sm"></span>
@@ -210,19 +207,10 @@ export default function AdminDashboard() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-4 mt-2">
-             {locationData.map((entry, index) => (
-               <div key={index} className="flex items-center gap-2 text-xs text-gray-400">
-                 <div className="w-2 h-2 rounded-full" style={{backgroundColor: COLORS[index % COLORS.length]}}></div>
-                 {entry.name}
-               </div>
-             ))}
-          </div>
         </div>
-
       </div>
 
-      {/* --- MASTER LOG TABLE --- */}
+      {/* TABLE */}
       <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-800">
            <h3 className="text-gray-200 font-semibold">Live Data Feed</h3>
@@ -264,4 +252,14 @@ export default function AdminDashboard() {
           </table>
           {logs.length === 0 && (
             <div className="p-12 text-center text-gray-600 flex flex-col items-center">
-              <AlertCircle
+              <AlertCircle className="w-8 h-8 mb-2 opacity-50" />
+              <p>No data found in secure vault.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+    </main>
+  );
+}
+// END OF FILE
