@@ -1,21 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-// If the line above gives an error, use: import { supabase } from "../../lib/supabase";
-
+import { supabase } from "@/lib/supabase"; // Check relative path if red
+import { useRouter } from "next/navigation"; // New Import for redirecting
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell 
 } from 'recharts';
 import { 
   Activity, Droplets, MapPin, Trash2, RefreshCw, 
-  TrendingUp, AlertCircle 
+  TrendingUp, AlertCircle, LogOut 
 } from 'lucide-react';
 
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 
 export default function AdminDashboard() {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Security State
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -30,9 +31,28 @@ export default function AdminDashboard() {
     activeSites: 0
   });
 
+  // --- SECURITY CHECK ---
   useEffect(() => {
-    fetchLogs();
+    checkSession();
   }, []);
+
+  async function checkSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      // If no ID card, kick them out
+      router.push("/login");
+    } else {
+      // If ID card exists, let them in and fetch data
+      setIsAuthenticated(true);
+      fetchLogs();
+    }
+  }
+
+  // --- LOGOUT FUNCTION ---
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   async function fetchLogs() {
     setLoading(true);
@@ -49,7 +69,6 @@ export default function AdminDashboard() {
   }
 
   function processAnalytics(data: any[]) {
-    // 1. Calculate KPIs
     const totalGas = data.reduce((sum, log) => sum + (log.amount || 0), 0);
     const uniqueSites = new Set(data.map(log => log.location)).size;
     
@@ -59,7 +78,6 @@ export default function AdminDashboard() {
       activeSites: uniqueSites
     });
 
-    // 2. Prepare Bar Chart Data
     const gasMap: any = {};
     data.forEach(log => {
       const gas = log.refrigerant || 'Unknown';
@@ -72,7 +90,6 @@ export default function AdminDashboard() {
     }));
     setGasData(processedGas);
 
-    // 3. Prepare Pie Chart Data
     const locMap: any = {};
     data.forEach(log => {
       const loc = log.location || 'Unknown';
@@ -92,6 +109,11 @@ export default function AdminDashboard() {
     fetchLogs();
   }
 
+  // If checking security, show a black loading screen
+  if (!isAuthenticated) {
+    return <div className="min-h-screen bg-black flex items-center justify-center text-gray-500">Verifying Credentials...</div>;
+  }
+
   return (
     <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans">
       
@@ -105,13 +127,22 @@ export default function AdminDashboard() {
           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">Executive Dashboard</h1>
         </div>
         
-        <button 
-          onClick={() => fetchLogs()} 
-          className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 px-4 py-2 rounded-lg text-sm transition-all"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Sync Data
-        </button>
+        <div className="flex gap-3">
+            <button 
+            onClick={() => fetchLogs()} 
+            className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 px-4 py-2 rounded-lg text-sm transition-all"
+            >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Sync
+            </button>
+            <button 
+            onClick={handleLogout} 
+            className="flex items-center gap-2 bg-red-900/20 hover:bg-red-900/40 border border-red-900/50 text-red-400 px-4 py-2 rounded-lg text-sm transition-all"
+            >
+            <LogOut className="w-4 h-4" />
+            Logout
+            </button>
+        </div>
       </div>
 
       {/* KPI CARDS */}
@@ -262,4 +293,3 @@ export default function AdminDashboard() {
     </main>
   );
 }
-// END OF FILE
