@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react"; 
+import { useState } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
 
@@ -13,27 +13,29 @@ export default function Home() {
     amount: "",
   });
 
-  // 1. RE-INTRODUCE REFS (Targets)
-  const locRef = useRef<HTMLInputElement>(null);
-  const unitRef = useRef<HTMLInputElement>(null);
-  const gasRef = useRef<HTMLSelectElement>(null);
-  const amtRef = useRef<HTMLInputElement>(null);
-  // We don't need a submit ref because the form handles the final enter
-
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 2. THE INTERCEPTOR (For Desktop)
-  const handleKeyDown = (e: React.KeyboardEvent, nextRef: any) => {
+  // --- THE NUCLEAR NAVIGATOR ---
+  const handleEnter = (e: React.KeyboardEvent, nextId: string, isSubmit = false) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // STOP the browser from Submitting
-      nextRef?.current?.focus(); // MOVE the cursor manually
+      e.preventDefault(); // KILL default behavior instantly
+      
+      if (isSubmit) {
+        handleSave(e); // Trigger Save
+      } else {
+        // Find the next box by its ID and force focus
+        const nextBox = document.getElementById(nextId);
+        if (nextBox) {
+          nextBox.focus();
+        }
+      }
     }
   };
 
-  const handleSave = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault(); // Stop reload
+  const handleSave = async (e?: React.FormEvent | React.KeyboardEvent) => {
+    if (e) e.preventDefault();
 
     if (!formData.location || !formData.unit_id || !formData.amount) {
       toast.error("Missing Data: Please fill all fields."); 
@@ -61,8 +63,9 @@ export default function Home() {
     } else {
       toast.success("Log Entry Secured."); 
       setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      // Reset focus to start
-      locRef.current?.focus();
+      
+      // Jump back to the start
+      document.getElementById("box-1")?.focus();
     }
   };
 
@@ -71,7 +74,7 @@ export default function Home() {
       
       <div className="w-full max-w-md mb-8 mt-10">
         <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-          True608
+          True608 Systems (V4)
         </h1>
         <p className="text-gray-500 text-sm">EPA Section 608 Compliance Log</p>
       </div>
@@ -83,14 +86,13 @@ export default function Home() {
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Job Location</label>
           <input 
-            ref={locRef}
+            id="box-1" // <--- ID TAG
+            onKeyDown={(e) => handleEnter(e, "box-2")} // GO TO BOX 2
             name="location"
             value={formData.location}
             onChange={handleChange}
-            // DESKTOP LOGIC: Press Enter -> Go to Unit
-            onKeyDown={(e) => handleKeyDown(e, unitRef)}
             type="text" 
-            enterKeyHint="next" // MOBILE LOGIC
+            enterKeyHint="next" 
             placeholder="e.g. Pizza Hut, Main St"
             className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
           />
@@ -100,12 +102,11 @@ export default function Home() {
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Unit ID</label>
           <input 
-            ref={unitRef}
+            id="box-2" // <--- ID TAG
+            onKeyDown={(e) => handleEnter(e, "box-3")} // GO TO BOX 3
             name="unit_id"
             value={formData.unit_id}
             onChange={handleChange}
-            // DESKTOP LOGIC: Press Enter -> Go to Gas
-            onKeyDown={(e) => handleKeyDown(e, gasRef)}
             type="text" 
             enterKeyHint="next"
             placeholder="e.g. RTU-04"
@@ -119,12 +120,11 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Refrigerant</label>
             <select 
-              ref={gasRef}
+              id="box-3" // <--- ID TAG
+              onKeyDown={(e) => handleEnter(e, "box-4")} // GO TO BOX 4
               name="refrigerant"
               value={formData.refrigerant}
               onChange={handleChange}
-              // DESKTOP LOGIC: Press Enter -> Go to Amount
-              onKeyDown={(e) => handleKeyDown(e, amtRef)}
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200 cursor-pointer"
             >
               <option>R-410A</option>
@@ -138,7 +138,9 @@ export default function Home() {
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Amount (lbs)</label>
             <input 
-              ref={amtRef}
+              id="box-4" // <--- ID TAG
+              // LAST BOX: NO NEXT ID, JUST SUBMIT TRUE
+              onKeyDown={(e) => handleEnter(e, "", true)} 
               name="amount"
               value={formData.amount}
               onChange={handleChange}
@@ -147,9 +149,6 @@ export default function Home() {
               min="0"
               enterKeyHint="done"
               placeholder="0.0"
-              // WE DO NOT ADD onKeyDown HERE.
-              // Why? Because on the last field, "Enter" SHOULD submit the form.
-              // The <form> tag handles that automatically.
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200"
             />
           </div>
