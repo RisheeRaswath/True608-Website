@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
-// ADDED "MapPin" TO THE IMPORTS BELOW
 import { 
   LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
@@ -170,7 +169,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    // THEME: ENTERPRISE DARK (Slate 950)
+    // THEME: ENTERPRISE DARK
     <main className="min-h-screen bg-[#0F1117] text-slate-300 p-4 md:p-8 font-sans">
       
       {/* HEADER */}
@@ -178,22 +177,22 @@ export default function AdminDashboard() {
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
             <LayoutDashboard className="w-6 h-6 text-blue-500" />
-            Admin Dashboard
+            True<span className="text-blue-500">608</span> Systems
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Overview of compliance activities</p>
+          <p className="text-slate-500 text-sm mt-1">Enterprise Compliance Dashboard</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
-            <button onClick={exportToPDF} className="flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
+            <button onClick={exportToPDF} className="cursor-pointer flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
               <FileText className="w-3 h-3" /> Report
             </button>
-            <button onClick={exportToCSV} className="flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
+            <button onClick={exportToCSV} className="cursor-pointer flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
               <Download className="w-3 h-3" /> Export
             </button>
             
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 bg-[#1A1D24] hover:bg-red-900/10 border border-slate-800 hover:border-red-900/30 text-slate-400 hover:text-red-400 px-3 py-2 rounded-lg text-xs font-medium transition-all ml-2"
+              className="cursor-pointer flex items-center gap-2 bg-[#1A1D24] hover:bg-red-900/10 border border-slate-800 hover:border-red-900/30 text-slate-400 hover:text-red-400 px-3 py-2 rounded-lg text-xs font-medium transition-all ml-2"
             >
               <LogOut className="w-3 h-3" /> Log Out
             </button>
@@ -203,7 +202,7 @@ export default function AdminDashboard() {
       {/* KPI CARDS - CLEAN & MINIMAL */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Volume</p>
             <Database className="w-4 h-4 text-blue-500" />
@@ -211,7 +210,7 @@ export default function AdminDashboard() {
           <h3 className="text-3xl font-bold text-white">{stats.totalGas} <span className="text-sm text-slate-500 font-normal">lbs</span></h3>
         </div>
 
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Entries</p>
             <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -219,7 +218,7 @@ export default function AdminDashboard() {
           <h3 className="text-3xl font-bold text-white">{stats.totalEntries}</h3>
         </div>
 
-        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl hover:border-slate-700 transition-all duration-300">
           <div className="flex justify-between items-start mb-2">
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Active Sites</p>
             <Map className="w-4 h-4 text-purple-500" />
@@ -330,7 +329,7 @@ export default function AdminDashboard() {
                   </td>
                   <td className="px-6 py-4 font-mono text-white font-semibold">{log.amount}</td>
                   <td className="px-6 py-4 text-right">
-                    <button onClick={() => deleteLog(log.id)} className="text-slate-600 hover:text-red-400 transition-colors">
+                    <button onClick={() => deleteLog(log.id)} className="cursor-pointer text-slate-600 hover:text-red-400 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
