@@ -172,20 +172,17 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - PERFECTLY ALIGNED */}
-        <div className="flex items-center gap-4">
-            {/* ICON BOX */}
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
+        {/* BRANDING */}
+        <div>
+            {/* Line 1: Icon + Title */}
+            <div className="flex items-center gap-3">
                 <LayoutDashboard className="w-6 h-6 text-blue-500" />
-            </div>
-            
-            {/* TEXT STACK */}
-            <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
-                    True<span className="text-blue-500">608</span>
+                <h1 className="text-2xl font-bold text-white tracking-tight">
+                    True<span className="text-blue-500">608</span> Systems
                 </h1>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1">Admin Dashboard</p>
             </div>
+            {/* Line 2: Subtitle (Indented to align with text) */}
+            <p className="text-slate-500 text-sm font-medium mt-1 ml-9">Admin Dashboard</p>
         </div>
         
         {/* ACTION BUTTONS */}
@@ -277,6 +274,7 @@ export default function AdminDashboard() {
                   <span className="text-sm font-medium text-slate-300 truncate w-32">{site.name}</span>
                   <span className="text-xs font-bold text-slate-400">{site.amount} lbs</span>
                 </div>
+                {/* Clean Progress Bar */}
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-600 rounded-full" 
