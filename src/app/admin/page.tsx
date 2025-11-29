@@ -7,7 +7,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { 
-  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
+  Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
@@ -172,22 +172,14 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - FIXED ALIGNMENT */}
-        <div className="flex items-center gap-4">
-            {/* Icon is separate */}
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <LayoutDashboard className="w-6 h-6 text-blue-500" />
-            </div>
-            
-            {/* Text Stack - Title and Subtitle share the same left edge */}
-            <div className="flex flex-col">
-                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
-                    True<span className="text-blue-500">608</span> Systems
-                </h1>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1.5">
-                    Admin Dashboard
-                </p>
-            </div>
+        {/* BRANDING BLOCK - TEXT ONLY */}
+        <div>
+            <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
+                True<span className="text-blue-500">608</span> Systems
+            </h1>
+            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1.5">
+                Admin Dashboard
+            </p>
         </div>
         
         {/* ACTION BUTTONS */}
@@ -239,6 +231,7 @@ export default function AdminDashboard() {
       {/* VISUAL ANALYTICS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         
+        {/* CHART: TIMELINE */}
         <div className="lg:col-span-2 bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px]">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-slate-500" />
@@ -264,6 +257,7 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
 
+        {/* LIST: LEADERBOARD */}
         <div className="bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px] overflow-y-auto custom-scrollbar">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-slate-500" />
