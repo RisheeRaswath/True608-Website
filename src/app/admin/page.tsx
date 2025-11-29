@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase"; 
 import { useRouter } from "next/navigation"; 
+import Link from "next/link"; // <--- FIXED: ADDED THIS IMPORT
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
@@ -172,14 +173,16 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - TEXT ONLY, STACKED */}
+        {/* BRANDING BLOCK - LINKED TO HOME */}
         <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
-                True<span className="text-blue-500">608</span>
-            </h1>
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1">
-                Admin Dashboard
-            </p>
+            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity block">
+                <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
+                    True<span className="text-blue-500">608</span>
+                </h1>
+                <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1">
+                    Admin Dashboard
+                </p>
+            </Link>
         </div>
         
         {/* ACTION BUTTONS */}

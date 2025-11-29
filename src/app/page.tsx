@@ -1,165 +1,105 @@
 "use client";
 
-import { useState } from "react"; 
-import { supabase } from "@/lib/supabase"; 
-import { toast } from "sonner"; 
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Shield, BarChart3, Lock, CheckCircle2 } from "lucide-react";
 
-export default function Home() {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    location: "",
-    unit_id: "",
-    refrigerant: "R-410A",
-    amount: "",
-  });
-
-  const handleChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleEnter = (e: React.KeyboardEvent, nextId: string) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (nextId === "SUBMIT") {
-        handleSave();
-      } else {
-        document.getElementById(nextId)?.focus();
-      }
-    }
-  };
-
-  const handleSave = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-
-    if (!formData.location || !formData.unit_id || !formData.amount) {
-      toast.error("Please complete all fields."); 
-      return;
-    }
-
-    setLoading(true);
-
-    const { error } = await supabase
-      .from("logs")
-      .insert([{
-          location: formData.location,
-          unit_id: formData.unit_id,
-          refrigerant: formData.refrigerant,
-          amount: parseFloat(formData.amount),
-        }]);
-
-    setLoading(false);
-
-    if (error) {
-      toast.error("Connection failed. Please try again."); 
-    } else {
-      toast.success("Log entry saved successfully."); 
-      setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      document.getElementById("field-1")?.focus();
-    }
-  };
-
+export default function LandingPage() {
   return (
-    // THEME: Professional Slate & Matte Black (Eye-Friendly)
-    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans">
+    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white">
       
-      <div className="w-full max-w-md mb-10 mt-12 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-          True<span className="text-blue-500">608</span> Systems
-        </h1>
-        <p className="text-slate-500 text-sm font-medium">The Operating System for HVAC Compliance</p>
-      </div>
+      {/* NAVBAR */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="text-xl font-bold tracking-tight">
+            True<span className="text-blue-500">608</span>
+          </div>
+          <div className="flex gap-4">
+            <Link href="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+              Admin Login
+            </Link>
+            <Link 
+              href="/log" 
+              className="bg-white text-black px-4 py-2 rounded-full text-xs font-bold hover:bg-slate-200 transition-all"
+            >
+              Launch App
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      <div className="w-full max-w-md space-y-6">
+      {/* HERO SECTION */}
+      <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/20 border border-blue-800/30 text-blue-400 text-xs font-bold uppercase tracking-wider mb-6">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          System Online
+        </div>
         
-        {/* Field 1 */}
-        <div className="group">
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-1">Job Site Location</label>
-          <input 
-            id="field-1"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            onKeyDown={(e) => handleEnter(e, "field-2")}
-            type="text" 
-            enterKeyHint="next" 
-            placeholder="e.g. 123 Main St"
-            className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500/50 rounded-xl p-4 text-white placeholder:text-slate-600 outline-none transition-all duration-200"
-          />
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500">
+          Compliance without <br/> the chaos.
+        </h1>
+        
+        <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          The operating system for HVAC fleets. Automate EPA Section 608 logs, track refrigerant usage, and avoid fines.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Link 
+            href="/log" 
+            className="w-full sm:w-auto h-12 px-8 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold flex items-center justify-center gap-2 transition-all hover:scale-105"
+          >
+            Open Field Tool <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link 
+            href="mailto:sales@true608.com" 
+            className="w-full sm:w-auto h-12 px-8 rounded-full border border-slate-700 hover:border-slate-500 text-slate-300 font-medium flex items-center justify-center gap-2 transition-all"
+          >
+            Contact Sales
+          </Link>
         </div>
-
-        {/* Field 2 */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-1">Equipment ID</label>
-          <input 
-            id="field-2"
-            name="unit_id"
-            value={formData.unit_id}
-            onChange={handleChange}
-            onKeyDown={(e) => handleEnter(e, "field-3")}
-            type="text" 
-            enterKeyHint="next"
-            placeholder="e.g. RTU-04"
-            className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500/50 rounded-xl p-4 text-white placeholder:text-slate-600 outline-none transition-all duration-200"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-1">Refrigerant</label>
-            <div className="relative">
-                <select 
-                id="field-3"
-                name="refrigerant"
-                value={formData.refrigerant}
-                onChange={handleChange}
-                onKeyDown={(e) => handleEnter(e, "field-4")}
-                className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500/50 rounded-xl p-4 text-white outline-none transition-all duration-200 appearance-none cursor-pointer"
-                >
-                <option>R-410A</option>
-                <option>R-22</option>
-                <option>R-404A</option>
-                <option>R-134a</option>
-                </select>
-                {/* Custom arrow for cleaner look */}
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-1">Lbs Added</label>
-            <input 
-              id="field-4"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              onKeyDown={(e) => handleEnter(e, "SUBMIT")}
-              type="number" 
-              step="0.1"
-              min="0"
-              enterKeyHint="done"
-              placeholder="0.0"
-              className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500/50 rounded-xl p-4 text-white placeholder:text-slate-600 outline-none transition-all duration-200"
-            />
-          </div>
-        </div>
-
-        <button 
-          onClick={() => handleSave()}
-          disabled={loading}
-          type="button" 
-          className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold py-4 rounded-xl mt-8 transition-all active:scale-[0.99] shadow-lg shadow-blue-900/10 flex items-center justify-center gap-2"
-        >
-          {loading ? "Saving..." : (
-            <>
-                <span>Save Entry</span>
-                <ArrowRight className="w-4 h-4 opacity-80" />
-            </>
-          )}
-        </button>
-
       </div>
+
+      {/* FEATURES GRID */}
+      <div className="max-w-6xl mx-auto px-6 py-20 border-t border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Feature 1 */}
+          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
+              <Shield className="w-5 h-5 text-blue-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2">EPA Compliant</h3>
+            <p className="text-slate-400 text-sm">Built strictly to Section 608 standards. Never lose a paper log again.</p>
+          </div>
+
+          {/* Feature 2 */}
+          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
+              <BarChart3 className="w-5 h-5 text-emerald-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2">Real-Time Analytics</h3>
+            <p className="text-slate-400 text-sm">Track gas usage across all job sites instantly from the Command Center.</p>
+          </div>
+
+          {/* Feature 3 */}
+          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-colors">
+            <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4">
+              <Lock className="w-5 h-5 text-purple-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2">Secure Vault</h3>
+            <p className="text-slate-400 text-sm">Your data is encrypted and backed up in the cloud. Accessible anywhere.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="border-t border-white/5 py-10 text-center">
+        <p className="text-slate-600 text-sm">
+          &copy; 2025 True608 Systems. All rights reserved.
+        </p>
+      </footer>
+
     </main>
   );
 }
