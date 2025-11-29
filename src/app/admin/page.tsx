@@ -172,17 +172,22 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING */}
-        <div>
-            {/* Line 1: Icon + Title */}
-            <div className="flex items-center gap-3">
+        {/* BRANDING BLOCK - FIXED ALIGNMENT */}
+        <div className="flex items-center gap-4">
+            {/* Icon is separate */}
+            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
                 <LayoutDashboard className="w-6 h-6 text-blue-500" />
-                <h1 className="text-2xl font-bold text-white tracking-tight">
+            </div>
+            
+            {/* Text Stack - Title and Subtitle share the same left edge */}
+            <div className="flex flex-col">
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
                     True<span className="text-blue-500">608</span> Systems
                 </h1>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1.5">
+                    Admin Dashboard
+                </p>
             </div>
-            {/* Line 2: Subtitle (Indented to align with text) */}
-            <p className="text-slate-500 text-sm font-medium mt-1 ml-9">Admin Dashboard</p>
         </div>
         
         {/* ACTION BUTTONS */}
@@ -234,7 +239,6 @@ export default function AdminDashboard() {
       {/* VISUAL ANALYTICS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         
-        {/* CHART: TIMELINE */}
         <div className="lg:col-span-2 bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px]">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-slate-500" />
@@ -260,7 +264,6 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* LIST: LEADERBOARD */}
         <div className="bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px] overflow-y-auto custom-scrollbar">
           <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-slate-500" />
@@ -274,7 +277,6 @@ export default function AdminDashboard() {
                   <span className="text-sm font-medium text-slate-300 truncate w-32">{site.name}</span>
                   <span className="text-xs font-bold text-slate-400">{site.amount} lbs</span>
                 </div>
-                {/* Clean Progress Bar */}
                 <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-600 rounded-full" 
@@ -297,11 +299,12 @@ export default function AdminDashboard() {
         <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#1A1D24]/50">
            <h3 className="text-slate-200 font-semibold text-sm">Recent Activity</h3>
            <div className="flex items-center gap-2">
+             {/* RED PULSING DOT FOR LIVE STATUS */}
              <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
              </span>
-             <span className="text-[10px] text-emerald-500 font-medium tracking-wide">LIVE</span>
+             <span className="text-[10px] text-red-500 font-medium tracking-wide">LIVE</span>
            </div>
         </div>
         <div className="overflow-x-auto">
@@ -320,7 +323,10 @@ export default function AdminDashboard() {
             <tbody className="divide-y divide-slate-800">
               {logs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div></td>
+                  <td className="px-6 py-4">
+                    {/* RED DOT FOR ROWS */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                  </td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">
                     {new Date(log.created_at).toLocaleDateString()}
                   </td>
