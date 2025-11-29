@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"; 
 import { supabase } from "@/lib/supabase"; 
-import { toast } from "sonner"; // <--- Connects to your new Layout
+import { toast } from "sonner"; 
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -13,32 +13,31 @@ export default function Home() {
     amount: "",
   });
 
-  // 1. NAVIGATION REFERENCES
+  // 1. CREATE TARGETS FOR FOCUS
   const locRef = useRef<HTMLInputElement>(null);
   const unitRef = useRef<HTMLInputElement>(null);
   const gasRef = useRef<HTMLSelectElement>(null);
   const amtRef = useRef<HTMLInputElement>(null);
-  const saveBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // 2. ENTER KEY LOGIC
-  const handleKeyDown = (e: React.KeyboardEvent, nextRef: any, isSubmit = false) => {
+  // 2. THE LOGIC: IF ENTER IS PRESSED, GO TO NEXT
+  const handleEnter = (e: React.KeyboardEvent, nextRef: any, isSubmit = false) => {
     if (e.key === "Enter") {
-      e.preventDefault(); 
+      e.preventDefault(); // Stop default browser behavior
       if (isSubmit) {
-        handleSave(); 
+        handleSave(); // Last box triggers Save
       } else {
-        nextRef.current?.focus(); 
+        nextRef.current?.focus(); // Other boxes jump to next
       }
     }
   };
 
   const handleSave = async () => {
     if (!formData.location || !formData.unit_id || !formData.amount) {
-      toast.error("Missing Data: Please fill all fields."); // <--- PREMIUM ALERT
+      toast.error("Missing Data: Please fill all fields."); 
       return;
     }
 
@@ -61,9 +60,9 @@ export default function Home() {
       console.error("Supabase Error:", error);
       toast.error("Database Connection Failed."); 
     } else {
-      toast.success("Log Entry Secured."); // <--- PREMIUM SUCCESS
+      toast.success("Log Entry Secured."); 
       setFormData({ ...formData, location: "", unit_id: "", amount: "" });
-      // Reset focus to top for speed
+      // Reset cursor to the first box so you can keep typing fast
       locRef.current?.focus();
     }
   };
@@ -80,12 +79,14 @@ export default function Home() {
 
       <div className="w-full max-w-md space-y-5">
         
+        {/* Field 1: Location */}
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Job Location</label>
           <input 
-            ref={locRef} 
-            onKeyDown={(e) => handleKeyDown(e, unitRef)} 
+            ref={locRef}
             name="location"
+            // WHEN ENTER PRESSED -> GO TO UNIT
+            onKeyDown={(e) => handleEnter(e, unitRef)}
             value={formData.location}
             onChange={handleChange}
             type="text" 
@@ -94,12 +95,14 @@ export default function Home() {
           />
         </div>
 
+        {/* Field 2: Unit ID */}
         <div>
           <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Unit ID</label>
           <input 
-            ref={unitRef} 
-            onKeyDown={(e) => handleKeyDown(e, gasRef)} 
+            ref={unitRef}
             name="unit_id"
+            // WHEN ENTER PRESSED -> GO TO GAS
+            onKeyDown={(e) => handleEnter(e, gasRef)}
             value={formData.unit_id}
             onChange={handleChange}
             type="text" 
@@ -109,12 +112,15 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
+          
+          {/* Field 3: Gas Type */}
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Refrigerant</label>
             <select 
-              ref={gasRef} 
-              onKeyDown={(e) => handleKeyDown(e, amtRef)} 
+              ref={gasRef}
               name="refrigerant"
+              // WHEN ENTER PRESSED -> GO TO AMOUNT
+              onKeyDown={(e) => handleEnter(e, amtRef)}
               value={formData.refrigerant}
               onChange={handleChange}
               className="w-full bg-gray-900 focus:bg-gray-800 border border-gray-800 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500 transition-all duration-200 cursor-pointer"
@@ -125,12 +131,15 @@ export default function Home() {
               <option>R-134a</option>
             </select>
           </div>
+
+          {/* Field 4: Amount */}
           <div>
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Amount (lbs)</label>
             <input 
-              ref={amtRef} 
-              onKeyDown={(e) => handleKeyDown(e, null, true)} // HIT ENTER TO SAVE
+              ref={amtRef}
               name="amount"
+              // WHEN ENTER PRESSED -> TRIGGER SAVE!
+              onKeyDown={(e) => handleEnter(e, null, true)}
               value={formData.amount}
               onChange={handleChange}
               type="number" 
@@ -142,11 +151,10 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Action Button */}
         <button 
-          ref={saveBtnRef}
           onClick={handleSave}
           disabled={loading}
-          // ADDED: cursor-pointer for hand icon
           className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-bold py-4 rounded-lg mt-6 transition-all active:scale-95 shadow-lg shadow-blue-900/20"
         >
           {loading ? "SAVING..." : "SAVE LOG ENTRY"}
