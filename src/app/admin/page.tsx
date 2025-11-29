@@ -6,16 +6,13 @@ import { useRouter } from "next/navigation";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
+// ADDED "MapPin" TO THE IMPORTS BELOW
 import { 
-  Activity, Droplets, MapPin, Trash2, RefreshCw, 
-  TrendingUp, AlertCircle, LogOut, Download, FileText, Shield, Star 
+  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
+  TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-// CAPTAIN AMERICA PALETTE
-const CHART_GRADIENT = "url(#colorGas)"; // Defined in JSX
-const STROKE_COLOR = "#3b82f6"; // Blue
 
 export default function AdminDashboard() {
   const router = useRouter(); 
@@ -126,7 +123,7 @@ export default function AdminDashboard() {
   }
 
   async function deleteLog(id: number) {
-    if (!window.confirm("CONFIRM: Eliminate this record?")) return;
+    if (!window.confirm("Are you sure you want to delete this record?")) return;
     await supabase.from("logs").delete().eq("id", id);
   }
 
@@ -167,124 +164,117 @@ export default function AdminDashboard() {
       body: tableRows,
       startY: 40,
       theme: 'grid',
-      headStyles: { fillColor: [30, 58, 138] } // Navy Blue Header
+      headStyles: { fillColor: [59, 130, 246] } // Professional Blue
     });
     doc.save("true608_report.pdf");
   }
 
   return (
-    // THEME: STRATEGIC NAVY BLUE
-    <main className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 font-sans selection:bg-red-500 selection:text-white">
+    // THEME: ENTERPRISE DARK (Slate 950)
+    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-4 md:p-8 font-sans">
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Shield className="text-red-500 w-5 h-5 fill-red-500/20" />
-            <h2 className="text-slate-400 text-xs uppercase tracking-[0.25em] font-black">Strategic Command</h2>
-          </div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase">
-            True<span className="text-blue-500">608</span> <span className="text-slate-600 font-thin">|</span> Overseer
+          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <LayoutDashboard className="w-6 h-6 text-blue-500" />
+            Admin Dashboard
           </h1>
+          <p className="text-slate-500 text-sm mt-1">Overview of compliance activities</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
-            <button onClick={exportToPDF} className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition-all text-slate-300">
+            <button onClick={exportToPDF} className="flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
               <FileText className="w-3 h-3" /> Report
             </button>
-            <button onClick={exportToCSV} className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition-all text-slate-300">
-              <Download className="w-3 h-3" /> Data
+            <button onClick={exportToCSV} className="flex items-center gap-2 bg-[#1A1D24] hover:bg-[#20242D] border border-slate-800 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-300">
+              <Download className="w-3 h-3" /> Export
             </button>
             
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 bg-red-900/10 hover:bg-red-900/30 border border-red-800/30 text-red-500 px-5 py-2 rounded text-xs font-black uppercase tracking-wider transition-all ml-2"
+              className="flex items-center gap-2 bg-[#1A1D24] hover:bg-red-900/10 border border-slate-800 hover:border-red-900/30 text-slate-400 hover:text-red-400 px-3 py-2 rounded-lg text-xs font-medium transition-all ml-2"
             >
-              <LogOut className="w-3 h-3" /> Disengage
+              <LogOut className="w-3 h-3" /> Log Out
             </button>
         </div>
       </div>
 
-      {/* KPI CARDS - TACTICAL PANELS */}
+      {/* KPI CARDS - CLEAN & MINIMAL */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {/* Card 1 */}
-        <div className="bg-slate-900/50 border-l-4 border-l-blue-600 border-y border-r border-slate-800 p-6 rounded-r-xl relative overflow-hidden">
+        
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
           <div className="flex justify-between items-start mb-2">
-            <p className="text-blue-400 text-xs font-black uppercase tracking-widest">Total Volume</p>
-            <Droplets className="w-5 h-5 text-slate-600" />
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Volume</p>
+            <Database className="w-4 h-4 text-blue-500" />
           </div>
-          <h3 className="text-4xl font-black text-white">{stats.totalGas} <span className="text-lg text-slate-500 font-medium">lbs</span></h3>
+          <h3 className="text-3xl font-bold text-white">{stats.totalGas} <span className="text-sm text-slate-500 font-normal">lbs</span></h3>
         </div>
 
-        {/* Card 2 */}
-        <div className="bg-slate-900/50 border-l-4 border-l-white border-y border-r border-slate-800 p-6 rounded-r-xl relative overflow-hidden">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
           <div className="flex justify-between items-start mb-2">
-            <p className="text-slate-300 text-xs font-black uppercase tracking-widest">Log Entries</p>
-            <TrendingUp className="w-5 h-5 text-slate-600" />
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Entries</p>
+            <TrendingUp className="w-4 h-4 text-emerald-500" />
           </div>
-          <h3 className="text-4xl font-black text-white">{stats.totalEntries}</h3>
+          <h3 className="text-3xl font-bold text-white">{stats.totalEntries}</h3>
         </div>
 
-        {/* Card 3 */}
-        <div className="bg-slate-900/50 border-l-4 border-l-red-600 border-y border-r border-slate-800 p-6 rounded-r-xl relative overflow-hidden">
+        <div className="bg-[#15171e] border border-slate-800 p-5 rounded-xl">
           <div className="flex justify-between items-start mb-2">
-            <p className="text-red-400 text-xs font-black uppercase tracking-widest">Active Sectors</p>
-            <MapPin className="w-5 h-5 text-slate-600" />
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Active Sites</p>
+            <Map className="w-4 h-4 text-purple-500" />
           </div>
-          <h3 className="text-4xl font-black text-white">{stats.activeSites}</h3>
+          <h3 className="text-3xl font-bold text-white">{stats.activeSites}</h3>
         </div>
       </div>
 
-      {/* INTELLIGENCE GRID */}
+      {/* VISUAL ANALYTICS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         
-        {/* LEFT: TIMELINE */}
-        <div className="lg:col-span-2 bg-slate-900/30 border border-slate-800 p-6 rounded-xl h-[400px]">
-          <h3 className="text-white text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-blue-500" />
-            Temporal Usage Data
+        {/* CHART: TIMELINE */}
+        <div className="lg:col-span-2 bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px]">
+          <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-slate-500" />
+            Usage History (30 Days)
           </h3>
           <ResponsiveContainer width="100%" height="85%">
             <AreaChart data={timelineData}>
               <defs>
                 <linearGradient id="colorGas" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-              <XAxis dataKey="date" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+              <XAxis dataKey="date" stroke="#555" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis stroke="#555" fontSize={10} tickLine={false} axisLine={false} />
               <Tooltip 
-                contentStyle={{backgroundColor:'#0f172a', border:'1px solid #1e293b', borderRadius: '4px', textTransform: 'uppercase', fontSize: '12px'}} 
+                contentStyle={{backgroundColor:'#0F1117', border:'1px solid #334155', borderRadius: '6px', fontSize: '12px'}} 
                 itemStyle={{color: '#fff'}}
               />
-              <Area type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorGas)" />
+              <Area type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorGas)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        {/* RIGHT: LEADERBOARD */}
-        <div className="bg-slate-900/30 border border-slate-800 p-6 rounded-xl h-[400px] overflow-y-auto custom-scrollbar">
-          <h3 className="text-white text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-            <Star className="w-4 h-4 text-red-500" />
-            High Priority Sites
+        {/* LIST: LEADERBOARD */}
+        <div className="bg-[#15171e] border border-slate-800 p-6 rounded-xl h-[350px] overflow-y-auto custom-scrollbar">
+          <h3 className="text-slate-200 text-sm font-semibold mb-6 flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-slate-500" />
+            Top Consumption Sites
           </h3>
           
-          <div className="space-y-6">
+          <div className="space-y-5">
             {siteLeaderboard.map((site, index) => (
-              <div key={index} className="group">
+              <div key={index}>
                 <div className="flex justify-between items-end mb-1">
-                  <div className="flex items-center gap-3">
-                    <span className="text-slate-600 text-xs font-mono font-bold">#{index + 1}</span>
-                    <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{site.name}</span>
-                  </div>
-                  <span className="text-xs font-black text-blue-400">{site.amount} lbs</span>
+                  <span className="text-sm font-medium text-slate-300 truncate w-32">{site.name}</span>
+                  <span className="text-xs font-bold text-slate-400">{site.amount} lbs</span>
                 </div>
-                {/* Progress Bar - Red/White/Blue Gradient */}
-                <div className="w-full h-2 bg-slate-800 rounded-sm overflow-hidden">
+                {/* Clean Progress Bar */}
+                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-blue-600 via-blue-400 to-white rounded-sm" 
+                    className="h-full bg-blue-600 rounded-full" 
                     style={{width: `${site.percentage}%`}}
                   ></div>
                 </div>
@@ -292,55 +282,55 @@ export default function AdminDashboard() {
             ))}
             
             {siteLeaderboard.length === 0 && (
-              <div className="text-center text-slate-600 text-xs py-10 font-mono">NO ACTIVE TARGETS</div>
+              <div className="text-center text-slate-600 text-xs py-10">No data available.</div>
             )}
           </div>
         </div>
 
       </div>
 
-      {/* MASTER TABLE */}
-      <div className="bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
-           <h3 className="text-slate-200 font-black text-xs uppercase tracking-widest">Incoming Data Stream</h3>
+      {/* TABLE */}
+      <div className="bg-[#15171e] border border-slate-800 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#1A1D24]/50">
+           <h3 className="text-slate-200 font-semibold text-sm">Recent Activity</h3>
            <div className="flex items-center gap-2">
              <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
              </span>
-             <span className="text-[10px] text-red-500 font-mono font-bold tracking-widest">LIVE</span>
+             <span className="text-[10px] text-emerald-500 font-medium tracking-wide">LIVE</span>
            </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-400">
-            <thead className="bg-slate-950 uppercase text-[10px] tracking-widest font-black text-slate-500">
+            <thead className="bg-[#111318] uppercase text-[10px] tracking-wider font-semibold text-slate-500">
               <tr>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Timestamp</th>
+                <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Unit ID</th>
-                <th className="px-6 py-4">Gas Type</th>
+                <th className="px-6 py-4">Refrigerant</th>
                 <th className="px-6 py-4">Amount</th>
-                <th className="px-6 py-4 text-right">Ops</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50">
+            <tbody className="divide-y divide-slate-800">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/30 transition-colors duration-200">
-                  <td className="px-6 py-4"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div></td>
-                  <td className="px-6 py-4 font-mono text-xs text-slate-500 font-bold">
-                    {new Date(log.created_at).toLocaleDateString()} <span className="text-slate-600 ml-1">{new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-6 py-4"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div></td>
+                  <td className="px-6 py-4 font-mono text-xs text-slate-500">
+                    {new Date(log.created_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 text-white font-bold">{log.location}</td>
-                  <td className="px-6 py-4 font-mono text-blue-400">{log.unit_id}</td>
+                  <td className="px-6 py-4 text-slate-300 font-medium">{log.location}</td>
+                  <td className="px-6 py-4 font-mono text-slate-500">{log.unit_id}</td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded text-[10px] font-black uppercase tracking-wide bg-slate-800 text-slate-300 border border-slate-700">
+                    <span className="inline-flex items-center px-2 py-1 rounded text-[10px] font-medium bg-slate-800 text-slate-400 border border-slate-700">
                       {log.refrigerant}
                     </span>
                   </td>
-                  <td className="px-6 py-4 font-mono text-white font-black">{log.amount}</td>
+                  <td className="px-6 py-4 font-mono text-white font-semibold">{log.amount}</td>
                   <td className="px-6 py-4 text-right">
-                    <button onClick={() => deleteLog(log.id)} className="text-slate-600 hover:text-red-500 transition-colors">
+                    <button onClick={() => deleteLog(log.id)} className="text-slate-600 hover:text-red-400 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </td>
