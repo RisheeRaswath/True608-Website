@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Logo } from "@/components/BrandLogo"; // Import your masterpiece
+// IMPORT YOUR CUSTOM LOGO
+import { Logo } from "@/components/BrandLogo"; 
 import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
@@ -12,9 +13,9 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           
-          {/* LOGO + TEXT LINK */}
+          {/* LOGO AREA - NOW WITH CUSTOM ICON */}
           <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-3">
-            {/* THE NEW LOGO */}
+            {/* The Custom T-Gauge Logo */}
             <Logo className="w-8 h-8" />
             <div className="text-xl font-bold tracking-tight">
               True<span className="text-blue-500">608</span>
@@ -90,7 +91,11 @@ export default function LandingPage() {
               
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
                 <div className="text-center mb-4">
-                  <div className="text-xl font-bold text-white">True<span className="text-blue-500">608</span></div>
+                  {/* APP SCREEN LOGO */}
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                     <Logo className="w-6 h-6" />
+                     <div className="text-xl font-bold text-white">True<span className="text-blue-500">608</span></div>
+                  </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-widest">Field Tool V1</div>
                 </div>
                 
@@ -120,7 +125,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 3. FEATURES GRID */}
+      {/* 3. FEATURES */}
       <div className="max-w-7xl mx-auto px-6 py-20 border-t border-white/5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
