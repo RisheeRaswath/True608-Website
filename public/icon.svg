@@ -1,18 +1,19 @@
-<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="512" height="512" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60a5fa" />
-      <stop offset="100%" stop-color="#2563eb" />
+    <linearGradient id="ultraEcoGrad" x1="100%" y1="50%" x2="0%" y2="50%"> {/* Right to Left */}
+      <stop offset="0%" stop-color="#10b981" />   {/* Emerald Green */}
+      <stop offset="92%" stop-color="#3b82f6" />  {/* Almost entirely Green now */}
+      <stop offset="100%" stop-color="#2563eb" /> {/* Just a sliver of Blue Tail */}
     </linearGradient>
   </defs>
   
-  {/* 1. Background Container (For App Icon contrast on phones) */}
+  {/* Dark Background */}
   <rect width="100" height="100" rx="22" fill="#0F1117" />
 
-  {/* 2. The "Gauge" Ring */}
+  {/* The Gauge Ring */}
   <circle 
     cx="50" cy="50" r="38" 
-    stroke="url(#blueGrad)" 
+    stroke="url(#ultraEcoGrad)" 
     stroke-width="10" 
     stroke-linecap="round" 
     stroke-dasharray="185" 
@@ -20,11 +21,9 @@
     transform="rotate(135 50 50)" 
   />
   
-  {/* 3. The New "Ascending T" */}
+  {/* The Ascending T */}
   <g stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-    {/* The Stem of the T */}
     <path d="M50 70 V42" />
-    {/* The Crossbar of the T forming the Arrowhead */}
     <path d="M32 42 L50 26 L68 42" />
   </g>
 </svg>
