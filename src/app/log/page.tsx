@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from "react"; 
+import { useState, useEffect } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
-import { ArrowRight, QrCode, X, CheckCircle2 } from "lucide-react"; 
+import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck } from "lucide-react"; 
 import { Scanner } from '@yudiel/react-qr-scanner'; 
 
+// --- AUTHORIZED CODES ---
+// You can add more codes here later for specific clients (e.g., "CLIENT-A", "CLIENT-B")
+const VALID_ACCESS_CODES = ["TRUE-608", "DEMO", "ADMIN"];
+
 export default function LogPage() {
+  // --- SECURITY STATE ---
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [accessCode, setAccessCode] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // --- FORM STATE ---
   const [loading, setLoading] = useState(false);
-  const [isScanning, setIsScanning] = useState(false); // Controls Camera
+  const [isScanning, setIsScanning] = useState(false); 
   
   const [formData, setFormData] = useState({
     location: "",
@@ -16,6 +26,27 @@ export default function LogPage() {
     refrigerant: "R-410A",
     amount: "",
   });
+
+  // 1. CHECK FOR SAVED KEY ON LOAD
+  useEffect(() => {
+    const savedCode = localStorage.getItem("true608-access-key");
+    if (savedCode && VALID_ACCESS_CODES.includes(savedCode)) {
+      setIsAuthorized(true);
+    }
+    setCheckingAuth(false);
+  }, []);
+
+  // 2. HANDLE LOGIN ATTEMPT
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (VALID_ACCESS_CODES.includes(accessCode.toUpperCase())) {
+      localStorage.setItem("true608-access-key", accessCode.toUpperCase()); // Save to phone
+      setIsAuthorized(true);
+      toast.success("Access Granted. Welcome.");
+    } else {
+      toast.error("Access Denied: Invalid Security Code.");
+    }
+  };
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,18 +63,15 @@ export default function LogPage() {
     }
   };
 
-  // --- CAMERA LOGIC ---
   const handleScan = (result: any) => {
     if (result) {
       const rawValue = result[0]?.rawValue; 
       if (rawValue) {
-        // Extract ID if it's a full URL
         const cleanId = rawValue.split('=').pop() || rawValue;
-        
         setFormData(prev => ({ ...prev, unit_id: cleanId })); 
         setIsScanning(false); 
         toast.success("Asset Tag Identified: " + cleanId);
-        document.getElementById("field-3")?.focus(); // Jump to next field
+        document.getElementById("field-3")?.focus(); 
       }
     }
   };
@@ -65,6 +93,7 @@ export default function LogPage() {
           unit_id: formData.unit_id,
           refrigerant: formData.refrigerant,
           amount: parseFloat(formData.amount),
+          // We can optionally save WHICH code they used to track client usage later
         }]);
 
     setLoading(false);
@@ -78,8 +107,50 @@ export default function LogPage() {
     }
   };
 
+  // --- RENDER: LOADING SCREEN ---
+  if (checkingAuth) return <div className="min-h-screen bg-black" />;
+
+  // --- RENDER: LOCK SCREEN (If not authorized) ---
+  if (!isAuthorized) {
+    return (
+      <main className="min-h-screen bg-[#050505] text-white p-6 flex flex-col items-center justify-center font-sans">
+        <div className="w-full max-w-sm bg-[#111] border border-slate-800 p-8 rounded-2xl shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex p-4 bg-blue-900/10 rounded-full mb-4 ring-1 ring-blue-500/20">
+              <Lock className="w-8 h-8 text-blue-500" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight">Security Checkpoint</h1>
+            <p className="text-slate-500 text-sm mt-2">Enter your Company Access Code to unlock the field tool.</p>
+          </div>
+          
+          <form onSubmit={handleAuth} className="space-y-4">
+            <input 
+              type="text" 
+              autoFocus
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+              placeholder="Ex: TRUE-608"
+              className="w-full bg-black border border-slate-700 focus:border-blue-500 rounded-xl p-4 text-center text-xl font-mono tracking-widest text-white outline-none transition-all uppercase placeholder:text-slate-700"
+            />
+            <button 
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-5 h-5" />
+              Verify Access
+            </button>
+          </form>
+          <p className="mt-6 text-center text-slate-600 text-xs">
+            Restricted System. Unauthorized access is logged.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  // --- RENDER: THE APP (If Authorized) ---
   return (
-    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans">
+    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans animate-in fade-in zoom-in duration-300">
       
       {/* HEADER */}
       <div className="w-full max-w-md mb-10 mt-8 text-center">
@@ -105,9 +176,7 @@ export default function LogPage() {
                     onScan={handleScan} 
                     allowMultiple={true}
                     scanDelay={500}
-                    components={{ 
-                      torch: true // KEEPING TORCH, REMOVED AUDIO TO FIX ERROR
-                    }}
+                    components={{ torch: true }}
                 />
                 <button 
                     onClick={() => setIsScanning(false)}
@@ -144,7 +213,7 @@ export default function LogPage() {
           />
         </div>
 
-        {/* Field 2 - HYBRID SCANNER INPUT */}
+        {/* Field 2 */}
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Equipment ID</label>
           <div className="relative group">
@@ -159,12 +228,10 @@ export default function LogPage() {
               placeholder="Scan QR or type ID..."
               className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500 rounded-xl p-4 pr-14 text-white placeholder:text-slate-600 outline-none transition-all duration-200 shadow-sm"
             />
-            {/* THE MAGIC BUTTON */}
             <button 
               onClick={() => setIsScanning(true)}
               type="button"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-lg transition-all active:scale-95 border border-blue-500/20 hover:border-blue-500/50"
-              title="Scan Asset Tag"
             >
               <QrCode className="w-5 h-5" />
             </button>
