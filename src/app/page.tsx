@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Logo } from "@/components/BrandLogo"; // Import your masterpiece
 import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
@@ -10,7 +11,11 @@ export default function LandingPage() {
       {/* 1. NAVBAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
+          
+          {/* LOGO + TEXT LINK */}
+          <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-3">
+            {/* THE NEW LOGO */}
+            <Logo className="w-8 h-8" />
             <div className="text-xl font-bold tracking-tight">
               True<span className="text-blue-500">608</span>
             </div>
@@ -37,13 +42,11 @@ export default function LandingPage() {
           {/* LEFT: THE PITCH */}
           <div className="text-left">
             
-            {/* ALERT BADGE */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/20 border border-red-800/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
               <AlertTriangle className="w-3 h-3" />
               Strict Enforcement Active
             </div>
             
-            {/* HERO TITLE - UPDATED TEXT */}
             <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500 leading-[1.1]">
               Avoid <span className="text-red-500">crippling</span> <br/> EPA fines.
             </h1>
@@ -68,7 +71,6 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* TRUST BADGES */}
             <div className="mt-12 pt-8 border-t border-white/5">
               <p className="text-xs text-slate-600 font-bold uppercase tracking-widest mb-4">Engineered for compliance with</p>
               <div className="flex gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
@@ -79,12 +81,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT: THE PHONE VISUAL */}
+          {/* RIGHT: THE VISUAL PROOF */}
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
             
-            {/* REMOVED: transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500 */}
-<div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
+            <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-24 bg-black rounded-b-xl z-20"></div>
               
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
@@ -119,7 +120,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 3. FEATURES */}
+      {/* 3. FEATURES GRID */}
       <div className="max-w-7xl mx-auto px-6 py-20 border-t border-white/5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
@@ -154,22 +155,10 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/5 py-12 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <div className="text-lg font-bold text-white mb-2">True<span className="text-blue-500">608</span></div>
-            <p className="text-slate-500 text-sm">
-              &copy; 2025 True608 Systems. All rights reserved.
-            </p>
-          </div>
-          
-          <div className="flex gap-8 text-sm font-medium text-slate-500">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="mailto:support@true608.com" className="hover:text-white transition-colors">Support</Link>
-          </div>
-        </div>
+      <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
+        <p className="text-slate-600 text-sm">
+          &copy; 2025 True608 Systems. All rights reserved.
+        </p>
       </footer>
 
     </main>
