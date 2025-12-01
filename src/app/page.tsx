@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "@/components/Logo";
+import Link from "next/link";
 import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
