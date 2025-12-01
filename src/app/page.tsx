@@ -83,7 +83,8 @@ export default function LandingPage() {
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
             
-            <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
+            {/* REMOVED: transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500 */}
+<div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-24 bg-black rounded-b-xl z-20"></div>
               
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
