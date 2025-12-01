@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase"; 
 import { useRouter } from "next/navigation"; 
 import Link from "next/link";
-// IMPORT YOUR CUSTOM LOGO HERE
-import { Logo } from "@/components/Logo"; 
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { 
-  Map, MapPin, Trash2, RefreshCw, 
+  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
@@ -175,21 +173,16 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - WITH CUSTOM LOGO */}
-        <div className="flex items-center gap-4">
-            {/* THE CUSTOM LOGO */}
-            <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                <Logo className="w-8 h-8" />
-            </div>
-            
-            <div className="flex flex-col">
-                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
-                    True<span className="text-blue-500">608</span> Systems
+        {/* BRANDING BLOCK - TEXT ONLY (NO LOGO ICON) */}
+        <div>
+            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity block">
+                <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
+                    True<span className="text-blue-500">608</span>
                 </h1>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1.5">
-                    Admin Dashboard
-                </p>
-            </div>
+            </Link>
+            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1">
+                Admin Dashboard
+            </p>
         </div>
         
         {/* ACTION BUTTONS */}
