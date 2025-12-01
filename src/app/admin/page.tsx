@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase"; 
 import { useRouter } from "next/navigation"; 
-import Link from "next/link"; // <--- FIXED: ADDED THIS IMPORT
+import Link from "next/link";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { 
-  Map, MapPin, Trash2, RefreshCw, 
+  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
@@ -173,16 +173,24 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - LINKED TO HOME */}
-        <div>
-            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity block">
-                <h1 className="text-3xl font-bold text-white tracking-tight leading-none">
-                    True<span className="text-blue-500">608</span>
-                </h1>
-                <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mt-1">
+        {/* BRANDING BLOCK - PERFECTLY ALIGNED */}
+        <div className="flex items-start gap-3">
+            {/* Small Icon */}
+            <div className="mt-1">
+                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+            </div>
+            
+            {/* Text Stack */}
+            <div className="flex flex-col">
+                <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
+                        True<span className="text-blue-500">608</span>
+                    </h1>
+                </Link>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1">
                     Admin Dashboard
                 </p>
-            </Link>
+            </div>
         </div>
         
         {/* ACTION BUTTONS */}
@@ -296,11 +304,13 @@ export default function AdminDashboard() {
         <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#1A1D24]/50">
            <h3 className="text-slate-200 font-semibold text-sm">Recent Activity</h3>
            <div className="flex items-center gap-2">
+             {/* RED PULSING DOT FOR LIVE STATUS */}
              <span className="relative flex h-2 w-2">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
              </span>
-             <span className="text-[10px] text-emerald-500 font-medium tracking-wide">LIVE</span>
+             {/* RED TEXT FOR LIVE */}
+             <span className="text-[10px] text-red-500 font-medium tracking-wide">LIVE</span>
            </div>
         </div>
         <div className="overflow-x-auto">
@@ -320,6 +330,7 @@ export default function AdminDashboard() {
               {logs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
                   <td className="px-6 py-4">
+                    {/* RED DOT FOR ROWS */}
                     <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                   </td>
                   <td className="px-6 py-4 font-mono text-xs text-slate-500">
