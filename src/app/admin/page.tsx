@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase"; 
 import { useRouter } from "next/navigation"; 
 import Link from "next/link";
+// IMPORT YOUR CUSTOM LOGO HERE
+import { Logo } from "@/components/Logo"; 
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { 
-  LayoutDashboard, Map, MapPin, Trash2, RefreshCw, 
+  Map, MapPin, Trash2, RefreshCw, 
   TrendingUp, AlertCircle, LogOut, Download, FileText, BarChart3, Database 
 } from 'lucide-react';
 import jsPDF from "jspdf";
@@ -173,21 +175,18 @@ export default function AdminDashboard() {
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-800 pb-6 gap-4">
         
-        {/* BRANDING BLOCK - PERFECTLY ALIGNED */}
-        <div className="flex items-start gap-3">
-            {/* Small Icon */}
-            <div className="mt-1">
-                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+        {/* BRANDING BLOCK - WITH CUSTOM LOGO */}
+        <div className="flex items-center gap-4">
+            {/* THE CUSTOM LOGO */}
+            <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                <Logo className="w-8 h-8" />
             </div>
             
-            {/* Text Stack */}
             <div className="flex flex-col">
-                <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
-                    <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
-                        True<span className="text-blue-500">608</span>
-                    </h1>
-                </Link>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1">
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
+                    True<span className="text-blue-500">608</span> Systems
+                </h1>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1.5">
                     Admin Dashboard
                 </p>
             </div>
@@ -309,8 +308,8 @@ export default function AdminDashboard() {
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
              </span>
-             {/* RED TEXT FOR LIVE */}
-             <span className="text-[10px] text-red-500 font-medium tracking-wide">LIVE</span>
+             {/* GREEN TEXT FOR LIVE STATUS */}
+             <span className="text-[10px] text-emerald-500 font-medium tracking-wide">LIVE</span>
            </div>
         </div>
         <div className="overflow-x-auto">
