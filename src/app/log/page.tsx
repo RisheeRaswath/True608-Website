@@ -1,22 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react"; 
+import { useState, useEffect, Suspense } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
-import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck } from "lucide-react"; 
+import { ArrowRight, QrCode, X, CheckCircle2 } from "lucide-react"; 
 import { Scanner } from '@yudiel/react-qr-scanner'; 
+import { useSearchParams } from "next/navigation";
 
-// --- AUTHORIZED CODES ---
-// You can add more codes here later for specific clients (e.g., "CLIENT-A", "CLIENT-B")
-const VALID_ACCESS_CODES = ["TRUE-608", "DEMO", "ADMIN"];
-
-export default function LogPage() {
-  // --- SECURITY STATE ---
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [accessCode, setAccessCode] = useState("");
-  const [checkingAuth, setCheckingAuth] = useState(true);
-
-  // --- FORM STATE ---
+// WRAPPER COMPONENT FOR SEARCH PARAMS (Required for Next.js)
+function LogForm() {
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false); 
   
@@ -27,26 +20,21 @@ export default function LogPage() {
     amount: "",
   });
 
-  // 1. CHECK FOR SAVED KEY ON LOAD
+  // --- MAGIC URL LOGIC ---
   useEffect(() => {
-    const savedCode = localStorage.getItem("true608-access-key");
-    if (savedCode && VALID_ACCESS_CODES.includes(savedCode)) {
-      setIsAuthorized(true);
+    // If URL is true608.com/log?unit_id=RTU-04, autofill it
+    const paramUnit = searchParams.get("unit_id");
+    const paramLoc = searchParams.get("location");
+    
+    if (paramUnit || paramLoc) {
+      setFormData(prev => ({
+        ...prev,
+        unit_id: paramUnit || prev.unit_id,
+        location: paramLoc || prev.location
+      }));
+      if (paramUnit) toast.info(`Unit Identified: ${paramUnit}`);
     }
-    setCheckingAuth(false);
-  }, []);
-
-  // 2. HANDLE LOGIN ATTEMPT
-  const handleAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (VALID_ACCESS_CODES.includes(accessCode.toUpperCase())) {
-      localStorage.setItem("true608-access-key", accessCode.toUpperCase()); // Save to phone
-      setIsAuthorized(true);
-      toast.success("Access Granted. Welcome.");
-    } else {
-      toast.error("Access Denied: Invalid Security Code.");
-    }
-  };
+  }, [searchParams]);
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -67,7 +55,17 @@ export default function LogPage() {
     if (result) {
       const rawValue = result[0]?.rawValue; 
       if (rawValue) {
-        const cleanId = rawValue.split('=').pop() || rawValue;
+        // Handle full URLs like https://true608.com/log?unit_id=RTU-04
+        let cleanId = rawValue;
+        try {
+            const url = new URL(rawValue);
+            const idFromUrl = url.searchParams.get("unit_id");
+            if (idFromUrl) cleanId = idFromUrl;
+        } catch (e) {
+            // Not a URL, just use raw text
+            cleanId = rawValue;
+        }
+        
         setFormData(prev => ({ ...prev, unit_id: cleanId })); 
         setIsScanning(false); 
         toast.success("Asset Tag Identified: " + cleanId);
@@ -93,7 +91,6 @@ export default function LogPage() {
           unit_id: formData.unit_id,
           refrigerant: formData.refrigerant,
           amount: parseFloat(formData.amount),
-          // We can optionally save WHICH code they used to track client usage later
         }]);
 
     setLoading(false);
@@ -107,66 +104,8 @@ export default function LogPage() {
     }
   };
 
-  // --- RENDER: LOADING SCREEN ---
-  if (checkingAuth) return <div className="min-h-screen bg-black" />;
-
-  // --- RENDER: LOCK SCREEN (If not authorized) ---
-  if (!isAuthorized) {
-    return (
-      <main className="min-h-screen bg-[#050505] text-white p-6 flex flex-col items-center justify-center font-sans">
-        <div className="w-full max-w-sm bg-[#111] border border-slate-800 p-8 rounded-2xl shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex p-4 bg-blue-900/10 rounded-full mb-4 ring-1 ring-blue-500/20">
-              <Lock className="w-8 h-8 text-blue-500" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight">Security Checkpoint</h1>
-            <p className="text-slate-500 text-sm mt-2">Enter your Company Access Code to unlock the field tool.</p>
-          </div>
-          
-          <form onSubmit={handleAuth} className="space-y-4">
-            <input 
-              type="text" 
-              autoFocus
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-              placeholder="Ex: TRUE-608"
-              className="w-full bg-black border border-slate-700 focus:border-blue-500 rounded-xl p-4 text-center text-xl font-mono tracking-widest text-white outline-none transition-all uppercase placeholder:text-slate-700"
-            />
-            <button 
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
-            >
-              <ShieldCheck className="w-5 h-5" />
-              Verify Access
-            </button>
-          </form>
-          <p className="mt-6 text-center text-slate-600 text-xs">
-            Restricted System. Unauthorized access is logged.
-          </p>
-        </div>
-      </main>
-    );
-  }
-
-  // --- RENDER: THE APP (If Authorized) ---
   return (
-    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans animate-in fade-in zoom-in duration-300">
-      
-      {/* HEADER */}
-      <div className="w-full max-w-md mb-10 mt-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-          True<span className="text-blue-500">608</span> Systems
-        </h1>
-        <div className="flex items-center justify-center gap-2">
-            <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Field Operations</p>
-        </div>
-      </div>
-
-      <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-6">
         
         {/* --- CAMERA OVERLAY --- */}
         {isScanning && (
@@ -213,7 +152,7 @@ export default function LogPage() {
           />
         </div>
 
-        {/* Field 2 */}
+        {/* Field 2 - HYBRID SCANNER INPUT */}
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Equipment ID</label>
           <div className="relative group">
@@ -291,8 +230,31 @@ export default function LogPage() {
             </>
           )}
         </button>
-
-      </div>
-    </main>
+    </div>
   );
+}
+
+// MAIN PAGE LAYOUT
+export default function LogPageLayout() {
+  return (
+    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans">
+      <div className="w-full max-w-md mb-10 mt-8 text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+          True<span className="text-blue-500">608</span> Systems
+        </h1>
+        <div className="flex items-center justify-center gap-2">
+            <span className="relative flex h-2 w-2">
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Field Operations</p>
+        </div>
+      </div>
+      
+      {/* WRAPPED IN SUSPENSE FOR NEXT.JS SEARCHPARAMS */}
+      <Suspense fallback={<div>Loading Interface...</div>}>
+        <LogForm />
+      </Suspense>
+    </main>
+  )
 }
