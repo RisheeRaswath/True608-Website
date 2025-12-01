@@ -165,8 +165,8 @@ export default function LandingPage() {
           </div>
           
           <div className="flex gap-8 text-sm font-medium text-slate-500">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             <Link href="mailto:support@true608.com" className="hover:text-white transition-colors">Support</Link>
           </div>
         </div>
