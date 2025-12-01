@@ -154,10 +154,22 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
-        <p className="text-slate-600 text-sm">
-          &copy; 2025 True608 Systems. All rights reserved.
-        </p>
+      {/* FOOTER */}
+      <footer className="border-t border-white/5 py-12 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <div className="text-lg font-bold text-white mb-2">True<span className="text-blue-500">608</span></div>
+            <p className="text-slate-500 text-sm">
+              &copy; 2025 True608 Systems. All rights reserved.
+            </p>
+          </div>
+          
+          <div className="flex gap-8 text-sm font-medium text-slate-500">
+            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="mailto:support@true608.com" className="hover:text-white transition-colors">Support</Link>
+          </div>
+        </div>
       </footer>
 
     </main>
