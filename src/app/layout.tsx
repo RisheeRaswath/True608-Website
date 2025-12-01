@@ -10,9 +10,9 @@ export const metadata: Metadata = {
   description: "The Operating System for HVAC Compliance",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icon-192.png",
-    shortcut: "/icon-192.png",
-    apple: "/icon-512.png",
+    icon: "/icon.svg?v=2", 
+    shortcut: "/icon.svg?v=2",
+    apple: "/icon-512.png?v=2", // Use the PNG for Apple, it works better
   },
 };
 

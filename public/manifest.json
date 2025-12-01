@@ -2,7 +2,7 @@
   "name": "True608 Systems",
   "short_name": "True608",
   "description": "EPA Section 608 Compliance OS",
-  "start_url": "/",
+  "start_url": "/log",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
