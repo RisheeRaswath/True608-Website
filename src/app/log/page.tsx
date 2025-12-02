@@ -3,16 +3,25 @@
 import { useState, useEffect, Suspense } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
-import { ArrowRight, QrCode, X, CheckCircle2 } from "lucide-react"; 
+import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck, LogOut } from "lucide-react"; 
 import { Scanner } from '@yudiel/react-qr-scanner'; 
 import { useSearchParams } from "next/navigation";
 
-// WRAPPER COMPONENT FOR SEARCH PARAMS (Required for Next.js)
+// --- SECURITY CONFIG ---
+const VALID_ACCESS_CODES = ["TRUE-608", "DEMO", "ADMIN"];
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 Hours in Milliseconds
+
 function LogForm() {
   const searchParams = useSearchParams();
+  
+  // --- SECURITY STATE ---
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [accessCode, setAccessCode] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // --- APP STATE ---
   const [loading, setLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false); 
-  
   const [formData, setFormData] = useState({
     location: "",
     unit_id: "",
@@ -20,9 +29,31 @@ function LogForm() {
     amount: "",
   });
 
-  // --- MAGIC URL LOGIC ---
+  // 1. CHECK SESSION ON LOAD (The 24-Hour Rule)
   useEffect(() => {
-    // If URL is true608.com/log?unit_id=RTU-04, autofill it
+    const savedCode = localStorage.getItem("true608-access-key");
+    const expiryTime = localStorage.getItem("true608-session-expiry");
+    
+    const now = Date.now();
+
+    if (savedCode && expiryTime && VALID_ACCESS_CODES.includes(savedCode)) {
+      // Check if session is expired
+      if (now < parseInt(expiryTime)) {
+        setIsAuthorized(true); // Valid Session
+      } else {
+        // Session Expired - Clear it
+        localStorage.removeItem("true608-access-key");
+        localStorage.removeItem("true608-session-expiry");
+        toast.warning("Session Expired. Please verify access.");
+      }
+    }
+    setCheckingAuth(false);
+  }, []);
+
+  // 2. HANDLE MAGIC URL PARAMS
+  useEffect(() => {
+    if (!isAuthorized) return; // Don't fill if locked
+
     const paramUnit = searchParams.get("unit_id");
     const paramLoc = searchParams.get("location");
     
@@ -34,7 +65,33 @@ function LogForm() {
       }));
       if (paramUnit) toast.info(`Unit Identified: ${paramUnit}`);
     }
-  }, [searchParams]);
+  }, [searchParams, isAuthorized]);
+
+  // 3. HANDLE LOGIN (Create 24h Session)
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (VALID_ACCESS_CODES.includes(accessCode.toUpperCase())) {
+      
+      // Save Code AND Expiry Time
+      const expiry = Date.now() + SESSION_DURATION_MS;
+      localStorage.setItem("true608-access-key", accessCode.toUpperCase());
+      localStorage.setItem("true608-session-expiry", expiry.toString());
+      
+      setIsAuthorized(true);
+      toast.success("Access Granted. Session active for 24 hours.");
+    } else {
+      toast.error("Access Denied: Invalid Security Code.");
+    }
+  };
+
+  // 4. MANUAL LOGOUT (For Demos & Security)
+  const handleLogout = () => {
+    localStorage.removeItem("true608-access-key");
+    localStorage.removeItem("true608-session-expiry");
+    setIsAuthorized(false);
+    setAccessCode("");
+    toast.success("System Disconnected.");
+  };
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -55,17 +112,7 @@ function LogForm() {
     if (result) {
       const rawValue = result[0]?.rawValue; 
       if (rawValue) {
-        // Handle full URLs like https://true608.com/log?unit_id=RTU-04
-        let cleanId = rawValue;
-        try {
-            const url = new URL(rawValue);
-            const idFromUrl = url.searchParams.get("unit_id");
-            if (idFromUrl) cleanId = idFromUrl;
-        } catch (e) {
-            // Not a URL, just use raw text
-            cleanId = rawValue;
-        }
-        
+        const cleanId = rawValue.split('=').pop() || rawValue;
         setFormData(prev => ({ ...prev, unit_id: cleanId })); 
         setIsScanning(false); 
         toast.success("Asset Tag Identified: " + cleanId);
@@ -104,9 +151,71 @@ function LogForm() {
     }
   };
 
+  // --- RENDER: LOADING ---
+  if (checkingAuth) return <div className="min-h-screen bg-black" />;
+
+  // --- RENDER: LOCK SCREEN ---
+  if (!isAuthorized) {
+    return (
+      <div className="w-full max-w-sm bg-[#111] border border-slate-800 p-8 rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-300">
+          <div className="text-center mb-8">
+            <div className="inline-flex p-4 bg-blue-900/10 rounded-full mb-4 ring-1 ring-blue-500/20">
+              <Lock className="w-8 h-8 text-blue-500" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">Security Checkpoint</h1>
+            <p className="text-slate-500 text-sm mt-2">Enter your Company Access Code to unlock the field tool.</p>
+          </div>
+          
+          <form onSubmit={handleAuth} className="space-y-4">
+            <input 
+              type="text" 
+              autoFocus
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+              placeholder="Ex: TRUE-608"
+              className="w-full bg-black border border-slate-700 focus:border-blue-500 rounded-xl p-4 text-center text-xl font-mono tracking-widest text-white outline-none transition-all uppercase placeholder:text-slate-800"
+            />
+            <button 
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-5 h-5" />
+              Verify Access
+            </button>
+          </form>
+          <p className="mt-6 text-center text-slate-700 text-xs">
+            Restricted System. Unauthorized access is logged.
+          </p>
+      </div>
+    );
+  }
+
+  // --- RENDER: THE APP ---
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-6 animate-in fade-in duration-500">
         
+        {/* HEADER WITH LOGOUT */}
+        <div className="w-full mb-10 mt-8 flex flex-col items-center relative">
+            <button 
+                onClick={handleLogout}
+                className="absolute right-0 top-0 p-2 text-slate-600 hover:text-red-500 transition-colors"
+                title="Disconnect Session"
+            >
+                <LogOut className="w-5 h-5" />
+            </button>
+
+            <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+            True<span className="text-blue-500">608</span> Systems
+            </h1>
+            <div className="flex items-center justify-center gap-2">
+                <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Field Operations</p>
+            </div>
+        </div>
+
         {/* --- CAMERA OVERLAY --- */}
         {isScanning && (
           <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 animate-in fade-in duration-200">
@@ -152,7 +261,7 @@ function LogForm() {
           />
         </div>
 
-        {/* Field 2 - HYBRID SCANNER INPUT */}
+        {/* Field 2 */}
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Equipment ID</label>
           <div className="relative group">
@@ -167,10 +276,12 @@ function LogForm() {
               placeholder="Scan QR or type ID..."
               className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500 rounded-xl p-4 pr-14 text-white placeholder:text-slate-600 outline-none transition-all duration-200 shadow-sm"
             />
+            {/* THE MAGIC BUTTON */}
             <button 
               onClick={() => setIsScanning(true)}
               type="button"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-lg transition-all active:scale-95 border border-blue-500/20 hover:border-blue-500/50"
+              title="Scan Asset Tag"
             >
               <QrCode className="w-5 h-5" />
             </button>
@@ -230,6 +341,7 @@ function LogForm() {
             </>
           )}
         </button>
+
     </div>
   );
 }
@@ -237,21 +349,7 @@ function LogForm() {
 // MAIN PAGE LAYOUT
 export default function LogPageLayout() {
   return (
-    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center font-sans">
-      <div className="w-full max-w-md mb-10 mt-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-          True<span className="text-blue-500">608</span> Systems
-        </h1>
-        <div className="flex items-center justify-center gap-2">
-            <span className="relative flex h-2 w-2">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Field Operations</p>
-        </div>
-      </div>
-      
-      {/* WRAPPED IN SUSPENSE FOR NEXT.JS SEARCHPARAMS */}
+    <main className="min-h-screen bg-[#0F1117] text-slate-300 p-6 flex flex-col items-center justify-center font-sans">
       <Suspense fallback={<div>Loading Interface...</div>}>
         <LogForm />
       </Suspense>
