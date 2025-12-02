@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner"; 
 import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck, LogOut, HelpCircle } from "lucide-react"; 
 import { Scanner } from '@yudiel/react-qr-scanner'; 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 // --- SECURITY CONFIG ---
 const VALID_ACCESS_CODES = ["TRUE-608", "DEMO", "ADMIN"];
@@ -13,6 +13,7 @@ const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 Hours
 
 function LogForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   
   // --- STATE ---
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -27,13 +28,27 @@ function LogForm() {
     amount: "",
   });
 
-  // 1. CHECK SESSION ON LOAD
+  // 1. CHECK SESSION & URL PARAMETERS
   useEffect(() => {
     const savedCode = localStorage.getItem("true608-access-key");
     const expiryTime = localStorage.getItem("true608-session-expiry");
     const now = Date.now();
+    
+    // CHECK URL FOR MAGIC LOGIN (?code=DEMO)
+    const urlCode = searchParams.get("code");
 
-    if (savedCode && expiryTime && VALID_ACCESS_CODES.includes(savedCode)) {
+    if (urlCode && VALID_ACCESS_CODES.includes(urlCode.toUpperCase())) {
+        // MAGIC LOGIN SUCCESS
+        const expiry = Date.now() + SESSION_DURATION_MS;
+        localStorage.setItem("true608-access-key", urlCode.toUpperCase());
+        localStorage.setItem("true608-session-expiry", expiry.toString());
+        setIsAuthorized(true);
+        toast.success("Demo Mode Activated. Welcome.");
+        // Clean URL so they don't see the code forever
+        router.replace("/log");
+    } 
+    else if (savedCode && expiryTime && VALID_ACCESS_CODES.includes(savedCode)) {
+      // EXISTING SESSION
       if (now < parseInt(expiryTime)) {
         setIsAuthorized(true);
       } else {
@@ -43,9 +58,9 @@ function LogForm() {
       }
     }
     setCheckingAuth(false);
-  }, []);
+  }, [searchParams, router]);
 
-  // 2. HANDLE MAGIC URL PARAMS
+  // 2. HANDLE MAGIC URL PARAMS FOR PRE-FILL
   useEffect(() => {
     if (!isAuthorized) return;
     const paramUnit = searchParams.get("unit_id");
@@ -61,7 +76,7 @@ function LogForm() {
     }
   }, [searchParams, isAuthorized]);
 
-  // 3. AUTH LOGIC
+  // 3. AUTH LOGIC (Manual)
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
     if (VALID_ACCESS_CODES.includes(accessCode.toUpperCase())) {
@@ -167,7 +182,6 @@ function LogForm() {
             />
             <button 
               type="submit"
-              // ADDED: cursor-pointer
               className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-5 h-5" />
@@ -175,9 +189,9 @@ function LogForm() {
             </button>
           </form>
           
-          {/* SUPPORT LINK ON LOCK SCREEN */}
+          {/* SUPPORT LINK */}
           <div className="mt-8 text-center">
-            <a href="mailto:support@true608.com" className="text-xs text-slate-600 hover:text-blue-500 transition-colors flex items-center justify-center gap-1 cursor-pointer">
+            <a href="mailto:support@true608.com" className="text-xs text-slate-600 hover:text-blue-500 transition-colors cursor-pointer flex items-center justify-center gap-1">
                 <HelpCircle className="w-3 h-3" />
                 Trouble logging in? Contact Support
             </a>
@@ -194,7 +208,6 @@ function LogForm() {
         <div className="w-full mb-10 mt-8 flex flex-col items-center relative">
             <button 
                 onClick={handleLogout}
-                // ADDED: cursor-pointer
                 className="absolute right-0 top-0 p-2 text-slate-600 hover:text-red-500 transition-colors cursor-pointer"
                 title="Disconnect Session"
             >
@@ -273,7 +286,7 @@ function LogForm() {
               placeholder="Scan QR or type ID..."
               className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500 rounded-xl p-4 pr-14 text-white placeholder:text-slate-600 outline-none transition-all duration-200 shadow-sm"
             />
-            {/* THE MAGIC BUTTON - ADDED cursor-pointer */}
+            {/* THE MAGIC BUTTON */}
             <button 
               onClick={() => setIsScanning(true)}
               type="button"
@@ -329,7 +342,6 @@ function LogForm() {
           onClick={() => handleSave()}
           disabled={loading}
           type="button" 
-          // ADDED: cursor-pointer
           className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold py-4 rounded-xl mt-8 transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
         >
           {loading ? "Transmitting..." : (
@@ -339,13 +351,6 @@ function LogForm() {
             </>
           )}
         </button>
-
-        {/* SUPPORT LINK IN APP */}
-        <div className="text-center mt-8">
-            <a href="mailto:support@true608.com" className="text-xs text-slate-600 hover:text-blue-500 transition-colors cursor-pointer">
-                System Issue? Contact Support
-            </a>
-        </div>
 
     </div>
   );
