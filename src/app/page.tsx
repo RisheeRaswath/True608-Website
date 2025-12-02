@@ -37,7 +37,9 @@ export default function LandingPage() {
       <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
+          {/* LEFT: THE PITCH */}
           <div className="text-left">
+            
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/20 border border-red-800/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
               <AlertTriangle className="w-3 h-3" />
               Strict Enforcement Active
@@ -59,6 +61,8 @@ export default function LandingPage() {
               >
                 Start Audit Defense <ArrowRight className="w-4 h-4" />
               </Link>
+              
+              {/* UPDATED LINK: GOES TO SALES PAGE */}
               <Link 
                 href="/sales" 
                 className="h-12 px-8 rounded-full border border-slate-700 hover:border-slate-500 text-slate-300 font-medium flex items-center justify-center gap-2 transition-all hover:bg-white/5"
@@ -77,10 +81,13 @@ export default function LandingPage() {
             </div>
           </div>
 
+          {/* RIGHT: THE VISUAL PROOF */}
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
+            
             <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-24 bg-black rounded-b-xl z-20"></div>
+              
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
                 <div className="text-center mb-4">
                   <div className="flex items-center justify-center gap-2 mb-1">
@@ -89,6 +96,7 @@ export default function LandingPage() {
                   </div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-widest">Field Tool V1</div>
                 </div>
+                
                 <div>
                   <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Job Site</div>
                   <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white">
@@ -102,6 +110,7 @@ export default function LandingPage() {
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   </div>
                 </div>
+                
                 <div className="mt-auto mb-6">
                   <div className="h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-900/20">
                     SECURE ENTRY
@@ -126,6 +135,7 @@ export default function LandingPage() {
               Every entry is timestamped, geotagged, and backed up. When the EPA knocks, you just print the PDF report.
             </p>
           </div>
+
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-colors group">
             <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
               <BarChart3 className="w-6 h-6 text-emerald-500" />
@@ -135,6 +145,7 @@ export default function LandingPage() {
               Our algorithms spot high-usage units automatically. Fix leaks before they become fines.
             </p>
           </div>
+
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-colors group">
             <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/20 transition-colors">
               <Lock className="w-6 h-6 text-purple-500" />
@@ -147,10 +158,9 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 4. NEW: CONTACT SECTION */}
+      {/* 4. CONTACT SECTION */}
       <div className="max-w-4xl mx-auto px-6 pb-20">
         <div className="bg-gradient-to-br from-blue-900/10 to-slate-900/10 border border-blue-500/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
-          {/* Subtle Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full -z-10"></div>
           
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -167,8 +177,10 @@ export default function LandingPage() {
             >
               <MessageSquare className="w-4 h-4" /> Contact Support
             </Link>
+            
+            {/* UPDATED LINK: GOES TO SALES PAGE */}
             <Link 
-              href="mailto:sales@true608.com"
+              href="/sales"
               className="px-8 py-3 rounded-xl bg-black border border-slate-700 text-white font-medium hover:bg-slate-900 transition-all flex items-center justify-center gap-2"
             >
               <Mail className="w-4 h-4" /> Contact Sales
@@ -177,7 +189,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 5. FOOTER */}
       <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
         <p className="text-slate-600 text-sm">
           &copy; 2025 True608 Systems. All rights reserved.
