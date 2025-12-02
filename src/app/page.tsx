@@ -60,7 +60,7 @@ export default function LandingPage() {
                 Start Audit Defense <ArrowRight className="w-4 h-4" />
               </Link>
               <Link 
-                href="mailto:sales@true608.com" 
+                href="/sales" 
                 className="h-12 px-8 rounded-full border border-slate-700 hover:border-slate-500 text-slate-300 font-medium flex items-center justify-center gap-2 transition-all hover:bg-white/5"
               >
                 Book Demo
