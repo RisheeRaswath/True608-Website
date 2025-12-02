@@ -3,23 +3,21 @@
 import { useState, useEffect, Suspense } from "react"; 
 import { supabase } from "@/lib/supabase"; 
 import { toast } from "sonner"; 
-import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck, LogOut } from "lucide-react"; 
+import { ArrowRight, QrCode, X, CheckCircle2, Lock, ShieldCheck, LogOut, HelpCircle } from "lucide-react"; 
 import { Scanner } from '@yudiel/react-qr-scanner'; 
 import { useSearchParams } from "next/navigation";
 
 // --- SECURITY CONFIG ---
 const VALID_ACCESS_CODES = ["TRUE-608", "DEMO", "ADMIN"];
-const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 Hours in Milliseconds
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000; // 24 Hours
 
 function LogForm() {
   const searchParams = useSearchParams();
   
-  // --- SECURITY STATE ---
+  // --- STATE ---
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [accessCode, setAccessCode] = useState("");
   const [checkingAuth, setCheckingAuth] = useState(true);
-
-  // --- APP STATE ---
   const [loading, setLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false); 
   const [formData, setFormData] = useState({
@@ -29,19 +27,16 @@ function LogForm() {
     amount: "",
   });
 
-  // 1. CHECK SESSION ON LOAD (The 24-Hour Rule)
+  // 1. CHECK SESSION ON LOAD
   useEffect(() => {
     const savedCode = localStorage.getItem("true608-access-key");
     const expiryTime = localStorage.getItem("true608-session-expiry");
-    
     const now = Date.now();
 
     if (savedCode && expiryTime && VALID_ACCESS_CODES.includes(savedCode)) {
-      // Check if session is expired
       if (now < parseInt(expiryTime)) {
-        setIsAuthorized(true); // Valid Session
+        setIsAuthorized(true);
       } else {
-        // Session Expired - Clear it
         localStorage.removeItem("true608-access-key");
         localStorage.removeItem("true608-session-expiry");
         toast.warning("Session Expired. Please verify access.");
@@ -52,8 +47,7 @@ function LogForm() {
 
   // 2. HANDLE MAGIC URL PARAMS
   useEffect(() => {
-    if (!isAuthorized) return; // Don't fill if locked
-
+    if (!isAuthorized) return;
     const paramUnit = searchParams.get("unit_id");
     const paramLoc = searchParams.get("location");
     
@@ -67,24 +61,20 @@ function LogForm() {
     }
   }, [searchParams, isAuthorized]);
 
-  // 3. HANDLE LOGIN (Create 24h Session)
+  // 3. AUTH LOGIC
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
     if (VALID_ACCESS_CODES.includes(accessCode.toUpperCase())) {
-      
-      // Save Code AND Expiry Time
       const expiry = Date.now() + SESSION_DURATION_MS;
       localStorage.setItem("true608-access-key", accessCode.toUpperCase());
       localStorage.setItem("true608-session-expiry", expiry.toString());
-      
       setIsAuthorized(true);
-      toast.success("Access Granted. Session active for 24 hours.");
+      toast.success("Access Granted.");
     } else {
       toast.error("Access Denied: Invalid Security Code.");
     }
   };
 
-  // 4. MANUAL LOGOUT (For Demos & Security)
   const handleLogout = () => {
     localStorage.removeItem("true608-access-key");
     localStorage.removeItem("true608-session-expiry");
@@ -163,7 +153,7 @@ function LogForm() {
               <Lock className="w-8 h-8 text-blue-500" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Security Checkpoint</h1>
-            <p className="text-slate-500 text-sm mt-2">Enter your Company Access Code to unlock the field tool.</p>
+            <p className="text-slate-500 text-sm mt-2">Enter your Company Access Code.</p>
           </div>
           
           <form onSubmit={handleAuth} className="space-y-4">
@@ -177,15 +167,21 @@ function LogForm() {
             />
             <button 
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
+              // ADDED: cursor-pointer
+              className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-5 h-5" />
               Verify Access
             </button>
           </form>
-          <p className="mt-6 text-center text-slate-700 text-xs">
-            Restricted System. Unauthorized access is logged.
-          </p>
+          
+          {/* SUPPORT LINK ON LOCK SCREEN */}
+          <div className="mt-8 text-center">
+            <a href="mailto:support@true608.com" className="text-xs text-slate-600 hover:text-blue-500 transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                <HelpCircle className="w-3 h-3" />
+                Trouble logging in? Contact Support
+            </a>
+          </div>
       </div>
     );
   }
@@ -198,7 +194,8 @@ function LogForm() {
         <div className="w-full mb-10 mt-8 flex flex-col items-center relative">
             <button 
                 onClick={handleLogout}
-                className="absolute right-0 top-0 p-2 text-slate-600 hover:text-red-500 transition-colors"
+                // ADDED: cursor-pointer
+                className="absolute right-0 top-0 p-2 text-slate-600 hover:text-red-500 transition-colors cursor-pointer"
                 title="Disconnect Session"
             >
                 <LogOut className="w-5 h-5" />
@@ -228,7 +225,7 @@ function LogForm() {
                 />
                 <button 
                     onClick={() => setIsScanning(false)}
-                    className="absolute top-4 right-4 bg-black/50 p-2 rounded-full text-white hover:bg-red-500/80 transition-colors z-20"
+                    className="absolute top-4 right-4 bg-black/50 p-2 rounded-full text-white hover:bg-red-500/80 transition-colors z-20 cursor-pointer"
                 >
                     <X className="w-6 h-6" />
                 </button>
@@ -239,7 +236,7 @@ function LogForm() {
                 </div>
             </div>
             <p className="mt-8 text-slate-400 text-sm font-medium">Align QR Code within frame</p>
-            <button onClick={() => setIsScanning(false)} className="mt-6 px-6 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm">
+            <button onClick={() => setIsScanning(false)} className="mt-6 px-6 py-3 rounded-xl bg-slate-800 text-white font-bold text-sm cursor-pointer">
                 Cancel Scan
             </button>
           </div>
@@ -276,11 +273,11 @@ function LogForm() {
               placeholder="Scan QR or type ID..."
               className="w-full bg-[#1A1D24] focus:bg-[#20242D] border border-slate-800 focus:border-blue-500 rounded-xl p-4 pr-14 text-white placeholder:text-slate-600 outline-none transition-all duration-200 shadow-sm"
             />
-            {/* THE MAGIC BUTTON */}
+            {/* THE MAGIC BUTTON - ADDED cursor-pointer */}
             <button 
               onClick={() => setIsScanning(true)}
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-lg transition-all active:scale-95 border border-blue-500/20 hover:border-blue-500/50"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-lg transition-all active:scale-95 border border-blue-500/20 hover:border-blue-500/50 cursor-pointer"
               title="Scan Asset Tag"
             >
               <QrCode className="w-5 h-5" />
@@ -332,6 +329,7 @@ function LogForm() {
           onClick={() => handleSave()}
           disabled={loading}
           type="button" 
+          // ADDED: cursor-pointer
           className="w-full cursor-pointer bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold py-4 rounded-xl mt-8 transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
         >
           {loading ? "Transmitting..." : (
@@ -341,6 +339,13 @@ function LogForm() {
             </>
           )}
         </button>
+
+        {/* SUPPORT LINK IN APP */}
+        <div className="text-center mt-8">
+            <a href="mailto:support@true608.com" className="text-xs text-slate-600 hover:text-blue-500 transition-colors cursor-pointer">
+                System Issue? Contact Support
+            </a>
+        </div>
 
     </div>
   );
