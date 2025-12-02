@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-// NEW IMPORT - THE FRESH FILE
 import { TrueLogo } from "@/components/TrueLogo"; 
 import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -15,7 +14,6 @@ export default function LandingPage() {
           
           {/* LOGO AREA */}
           <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-3">
-            {/* USING THE NEW COMPONENT */}
             <TrueLogo className="w-8 h-8" />
             <div className="text-xl font-bold tracking-tight">
               True<span className="text-blue-500">608</span>
@@ -43,10 +41,10 @@ export default function LandingPage() {
           {/* LEFT: THE PITCH */}
           <div className="text-left">
             
+            {/* ALERT BADGE - UPDATED TEXT */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/20 border border-red-800/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
               <AlertTriangle className="w-3 h-3" />
-              {/* VISUAL MARKER TO CONFIRM UPDATE */}
-              System V6 Live
+              Strict Enforcement Active
             </div>
             
             <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500 leading-[1.1]">
@@ -93,7 +91,6 @@ export default function LandingPage() {
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
                 <div className="text-center mb-4">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                     {/* USING THE NEW COMPONENT */}
                      <TrueLogo className="w-6 h-6" />
                      <div className="text-xl font-bold text-white">True<span className="text-blue-500">608</span></div>
                   </div>
@@ -126,6 +123,7 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* 3. FEATURES */}
       <div className="max-w-7xl mx-auto px-6 py-20 border-t border-white/5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
@@ -164,6 +162,10 @@ export default function LandingPage() {
         <p className="text-slate-600 text-sm">
           &copy; 2025 True608 Systems. All rights reserved.
         </p>
+        <div className="flex justify-center gap-6 mt-4 text-xs text-slate-600 font-medium">
+            <Link href="/privacy" className="hover:text-slate-400">Privacy</Link>
+            <Link href="/terms" className="hover:text-slate-400">Terms</Link>
+        </div>
       </footer>
 
     </main>
