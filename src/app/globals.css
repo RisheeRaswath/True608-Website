@@ -3,13 +3,8 @@
 @tailwind utilities;
 
 :root {
-  /* THE INTELLIGENCE PALETTE */
-  --background: #0B0F19; /* Matte Dark Slate */
-  --foreground: #F8FAFC; /* High-Contrast Text */
-  
-  --terminal-green: #00FF94;
-  --terminal-red: #FF3333;
-  --terminal-yellow: #FACC15;
+  --background: #0B0F19;
+  --foreground: #F8FAFC;
 }
 
 body {
@@ -17,7 +12,6 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden; 
-  /* The Fix: Proper Font Smoothing */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -25,13 +19,14 @@ body {
 /* --- THE TICKER ANIMATION --- */
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  100% { transform: translateX(-50%); } /* Changed to -50% for smoother loop */
 }
 
 .animate-ticker {
   display: flex;
   white-space: nowrap;
-  animation: scroll 40s linear infinite; 
+  animation: scroll 60s linear infinite; /* Slower, more readable */
+  width: max-content; /* Ensures it flows correctly */
 }
 
 .animate-ticker:hover {
