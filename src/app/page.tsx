@@ -80,7 +80,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT: THE VISUAL PROOF */}
+          {/* RIGHT: THE VISUAL PROOF (Phone) */}
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
             
@@ -176,6 +176,7 @@ export default function LandingPage() {
             >
               <MessageSquare className="w-4 h-4" /> Contact Support
             </Link>
+            
             <Link 
               href="/sales"
               className="px-8 py-3 rounded-xl bg-black border border-slate-700 text-white font-medium hover:bg-slate-900 transition-all flex items-center justify-center gap-2"
@@ -186,10 +187,10 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 5. FOOTER (I added a version tag "v3" so you KNOW when it updates) */}
+      {/* 5. FOOTER (v4 TAG TO CONFIRM) */}
       <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
         <p className="text-slate-600 text-sm">
-          &copy; 2025 True608 Systems. (v3)
+          &copy; 2025 True608 Systems. (v4 - Original)
         </p>
         <div className="flex justify-center gap-6 mt-4 text-xs text-slate-600 font-medium">
             <Link href="/privacy" className="hover:text-slate-400">Privacy</Link>
