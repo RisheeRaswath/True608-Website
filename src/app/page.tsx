@@ -80,7 +80,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT: THE VISUAL PROOF (Phone) */}
+          {/* RIGHT: THE VISUAL PROOF */}
           <div className="relative mx-auto lg:mx-0">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
             
@@ -186,9 +186,10 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* 5. FOOTER (I added a version tag "v3" so you KNOW when it updates) */}
       <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
         <p className="text-slate-600 text-sm">
-          &copy; 2025 True608 Systems. All rights reserved.
+          &copy; 2025 True608 Systems. (v3)
         </p>
         <div className="flex justify-center gap-6 mt-4 text-xs text-slate-600 font-medium">
             <Link href="/privacy" className="hover:text-slate-400">Privacy</Link>
