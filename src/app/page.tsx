@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { TrueLogo } from "@/components/TrueLogo"; 
 import { 
   ShieldCheck, AlertTriangle, Terminal, Activity, 
-  Lock, Server, FileText, ChevronRight, Search, Globe, MapPin
+  Lock, Server, FileText, ChevronRight, Search, Globe
 } from "lucide-react";
 
-// --- 1. UNIFIED HEADER (Ticker + Nav) ---
+// --- 1. UNIFIED HEADER (Height = 120px total) ---
 const Header = () => (
-  <header className="fixed top-0 w-full z-50 bg-[#0B0F19] shadow-2xl border-b border-white/5">
+  <header className="fixed top-0 w-full z-50 bg-[#0B0F19] shadow-2xl border-b border-white/5 h-[120px]">
     
-    {/* A. TICKER BAR (Solid Background) */}
-    <div className="w-full h-10 flex items-center overflow-hidden border-b border-white/5 bg-[#05070a] relative z-50">
+    {/* A. TICKER BAR */}
+    <div className="w-full h-10 flex items-center overflow-hidden border-b border-white/5 bg-black relative z-50">
       <div className="animate-ticker flex items-center">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="flex items-center">
@@ -27,8 +27,8 @@ const Header = () => (
       </div>
     </div>
 
-    {/* B. NAVBAR (Locked underneath) */}
-    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    {/* B. NAVBAR */}
+    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between bg-[#0B0F19]">
       <div className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
         <TrueLogo className="w-9 h-9" />
         <div className="flex flex-col">
@@ -43,7 +43,7 @@ const Header = () => (
   </header>
 );
 
-// --- 2. THE COUNTDOWN (With Seconds) ---
+// --- 2. THE COUNTDOWN (Visible & Huge) ---
 const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
@@ -102,7 +102,7 @@ const Countdown = () => {
   );
 };
 
-// --- 3. THE SCANNER ---
+// --- 3. THE SCANNER (Fixed Padding) ---
 const Scanner = () => {
   const [year, setYear] = useState("");
   const [result, setResult] = useState<null | "SAFE" | "RISK">(null);
@@ -116,7 +116,6 @@ const Scanner = () => {
   return (
     <div className="w-full max-w-[420px] mx-auto relative group z-20">
       
-      {/* Header */}
       <div className="flex justify-between items-center mb-4 px-2">
         <h3 className="text-slate-300 font-bold flex items-center gap-2 text-xs tracking-[0.2em] uppercase">
           <Terminal className="w-4 h-4 text-blue-500" /> Condenser Verification
@@ -127,18 +126,19 @@ const Scanner = () => {
         </div>
       </div>
 
-      {/* Input Field - Fixed Padding */}
       <div className="relative mb-8 shadow-2xl">
+        {/* ICON POSITIONED FAR LEFT */}
         <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none z-20">
           <Search className="h-5 w-5 text-slate-400" />
         </div>
         <div className="flex gap-0 relative">
+             {/* PL-20 (5rem/80px) = HUGE space so text never touches icon */}
              <input 
               type="number"
               placeholder="Enter Mfg Year..."
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              className="w-full bg-[#0A0D14] border border-slate-600 border-r-0 text-white pl-16 pr-4 py-6 font-mono text-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-l-xl placeholder:text-slate-600 transition-all z-10"
+              className="w-full bg-[#0A0D14] border border-slate-600 border-r-0 text-white pl-20 pr-4 py-6 font-mono text-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-l-xl placeholder:text-slate-600 transition-all z-10"
             />
             <button 
               onClick={check}
@@ -149,7 +149,6 @@ const Scanner = () => {
         </div>
       </div>
 
-      {/* Results */}
       {result === "SAFE" && (
         <div className="border-l-4 border-[#00FF94] bg-[#0A0D14] rounded-r-xl p-6 animate-in fade-in slide-in-from-top-2 shadow-[0_0_30px_rgba(0,255,148,0.1)] border border-white/10">
           <div className="flex items-center gap-3 mb-3">
@@ -184,9 +183,9 @@ const Scanner = () => {
   );
 };
 
-// --- 4. THE MAP (Google Maps Style / Satellite View) ---
+// --- 4. THE MAP (BRIGHTER & VISIBLE) ---
 const WarRoomMap = () => (
-  <div className="mt-48 border-t border-white/10 pt-20 bg-[#0B0F19]">
+  <div className="mt-48 border-t border-white/10 pt-20 bg-gradient-to-b from-[#0B0F19] to-black">
     <div className="flex flex-col md:flex-row justify-between items-end mb-10 max-w-7xl mx-auto px-6 gap-6">
       <div>
         <h4 className="text-white font-bold flex items-center gap-3 text-2xl">
@@ -200,13 +199,24 @@ const WarRoomMap = () => (
       </div>
     </div>
     
-    {/* MAP CONTAINER */}
     <div className="max-w-7xl mx-auto h-[600px] bg-[#05070a] border border-white/10 rounded-3xl relative overflow-hidden shadow-2xl flex items-center justify-center group">
       
-      {/* 1. SATELLITE GRID BACKGROUND */}
-      <div className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/US_map_outline.svg/1200px-US_map_outline.svg.png')] bg-contain bg-center bg-no-repeat opacity-20 invert hue-rotate-180 grayscale"></div>
+      {/* 1. SATELLITE MAP - INCREASED OPACITY & BRIGHTNESS */}
+      <svg viewBox="0 0 1000 600" className="w-[90%] h-auto opacity-60 stroke-slate-500 fill-[#1e293b] drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]">
+         <path d="M968.1,234.3l-12.8,11.6l-36.1,2.8l-5.6-11.2l-22.3,0l-16.7,11.2l-16.7-5.6l-2.8,16.7l-13.9,0l-19.5,19.5l-5.6,22.3
+         l13.9,25.1l-22.3,8.4l-11.2,30.7l-30.7,13.9l-25.1-5.6l-13.9,13.9l-44.6-2.8l-16.7,16.7l-13.9-2.8l-19.5,8.4l-11.2,27.9l-30.7-5.6
+         l-25.1,16.7l-8.4,19.5l-33.5,8.4l-13.9,19.5l-33.5,5.6l-13.9-8.4l-25.1,11.2l-5.6,19.5l-22.3,13.9l-13.9-2.8l-8.4,11.2l-41.8-8.4
+         l-25.1,11.2l-13.9-5.6l-19.5,8.4l-16.7-5.6l-27.9,8.4l-16.7-8.4l-11.2,8.4l-19.5-2.8l-5.6,11.2l-19.5-2.8l-11.2,11.2l-25.1,0
+         l-11.2-13.9l-30.7-2.8l-13.9,8.4l-19.5-5.6l-16.7,8.4l-16.7-5.6l-2.8-16.7l-13.9-5.6l-11.2,2.8l-19.5-5.6l-5.6-25.1l-25.1-13.9
+         l-2.8-22.3l-19.5-16.7l-22.3-2.8l-8.4-19.5l8.4-25.1l-5.6-19.5l-19.5-11.2l-2.8-22.3l13.9-19.5l2.8-22.3l-13.9-13.9l8.4-19.5
+         l25.1-11.2l16.7-30.7l30.7-16.7l13.9,2.8l16.7-11.2l22.3,2.8l16.7-8.4l11.2,2.8l30.7-13.9l19.5,5.6l16.7-11.2l27.9,2.8l16.7-13.9
+         l19.5,5.6l16.7-5.6l22.3,13.9l25.1-2.8l22.3-13.9l30.7,5.6l16.7-5.6l25.1,8.4l19.5-8.4l27.9,2.8l16.7-11.2l25.1,5.6l16.7-8.4
+         l30.7,2.8l22.3-11.2l16.7,5.6l27.9-8.4l19.5,5.6l25.1-8.4l22.3,5.6l16.7-8.4l25.1,2.8l13.9-11.2l19.5,5.6l16.7-5.6l27.9,5.6
+         l19.5-8.4l16.7,5.6l25.1-5.6l13.9,8.4l19.5-5.6l25.1,5.6l16.7-2.8l11.2,8.4l30.7-5.6l13.9,5.6l25.1-5.6l16.7,5.6l22.3-8.4
+         l16.7,2.8l11.2-8.4l19.5,5.6l16.7-2.8L968.1,234.3z"/>
+      </svg>
       
-      {/* 2. OVERLAY GRID */}
+      {/* 2. OVERLAY GRID (Visual Tech) */}
       <div className="absolute inset-0 grid grid-cols-[repeat(20,minmax(0,1fr))] gap-px opacity-10 pointer-events-none">
          {[...Array(400)].map((_, i) => (
            <div key={i} className="border border-blue-500/20"></div>
@@ -215,20 +225,20 @@ const WarRoomMap = () => (
 
       {/* 3. LIVE HOTSPOTS (Locations) */}
       
-      {/* PHOENIX (HVAC Capital) */}
+      {/* PHOENIX */}
       <div className="absolute top-[55%] left-[20%] group cursor-pointer">
          <div className="w-3 h-3 bg-[#00FF94] rounded-full animate-ping opacity-75 absolute"></div>
          <div className="w-3 h-3 bg-[#00FF94] rounded-full relative shadow-[0_0_20px_#00FF94]"></div>
-         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#00FF94]/50 text-[10px] text-[#00FF94] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#00FF94]/50 text-[10px] text-[#00FF94] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
             PHOENIX: 84 UNITS
          </div>
       </div>
 
-      {/* TEXAS (Houston) */}
+      {/* TEXAS */}
       <div className="absolute top-[75%] left-[45%] group cursor-pointer">
          <div className="w-3 h-3 bg-[#FF3333] rounded-full animate-ping opacity-75 absolute"></div>
          <div className="w-3 h-3 bg-[#FF3333] rounded-full relative shadow-[0_0_20px_#FF3333]"></div>
-         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FF3333]/50 text-[10px] text-[#FF3333] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FF3333]/50 text-[10px] text-[#FF3333] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
             HOUSTON: CRITICAL LOW
          </div>
       </div>
@@ -237,7 +247,7 @@ const WarRoomMap = () => (
       <div className="absolute top-[35%] right-[15%] group cursor-pointer">
          <div className="w-3 h-3 bg-blue-500 rounded-full animate-ping opacity-75 absolute"></div>
          <div className="w-3 h-3 bg-blue-500 rounded-full relative shadow-[0_0_20px_blue]"></div>
-         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-blue-500/50 text-[10px] text-blue-500 font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-blue-500/50 text-[10px] text-blue-500 font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
             NYC: 120 UNITS
          </div>
       </div>
@@ -246,7 +256,7 @@ const WarRoomMap = () => (
        <div className="absolute top-[85%] right-[18%] group cursor-pointer">
          <div className="w-3 h-3 bg-[#FACC15] rounded-full animate-ping opacity-75 absolute"></div>
          <div className="w-3 h-3 bg-[#FACC15] rounded-full relative shadow-[0_0_20px_#FACC15]"></div>
-         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FACC15]/50 text-[10px] text-[#FACC15] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FACC15]/50 text-[10px] text-[#FACC15] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-20">
             MIAMI: AUDIT ACTIVE
          </div>
       </div>
@@ -262,11 +272,11 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-[#0B0F19] text-white selection:bg-[#00FF94] selection:text-black font-sans pb-20 relative">
       
-      {/* UNIFIED HEADER (Replaces Ticker + Nav) */}
+      {/* HEADER (FIXED) */}
       <Header />
 
-      {/* HERO SECTION - Padded for Header */}
-      <div className="pt-48 px-6 relative z-10"> 
+      {/* HERO SECTION - PUSHED DOWN BY 200px TO CLEAR HEADER */}
+      <div className="pt-[200px] px-6 relative z-10"> 
         <div className="max-w-7xl mx-auto text-center">
           
           <Countdown />
