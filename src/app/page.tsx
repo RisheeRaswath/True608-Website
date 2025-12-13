@@ -1,97 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { TrueLogo } from "@/components/TrueLogo"; 
-import { ShieldCheck, ArrowRight, Check, AlertTriangle, Terminal } from "lucide-react";
-
-// --- COMPONENT: THE CHECKER (Centered & Sleek) ---
-const ComplianceChecker = () => {
-  const [year, setYear] = useState("");
-  const [status, setStatus] = useState<"IDLE" | "SAFE" | "RISK">("IDLE");
-
-  const check = () => {
-    if (!year) return;
-    const y = parseInt(year);
-    setStatus(y < 2025 ? "SAFE" : "RISK");
-  };
-
-  return (
-    <div className="w-full max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-2 backdrop-blur-xl shadow-2xl mt-12">
-      <div className="bg-black/40 rounded-xl p-6 border border-white/5">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex-1 w-full">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">
-              Condenser Mfg Year
-            </label>
-            <input 
-              aria-label="Year"
-              type="number" 
-              placeholder="e.g. 2025"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="w-full bg-transparent border-b border-slate-700 text-white text-2xl font-mono py-2 focus:border-blue-500 outline-none placeholder:text-slate-800 transition-colors"
-            />
-          </div>
-          <button 
-            onClick={check}
-            className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-lg uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-900/20"
-          >
-            Check Status
-          </button>
-        </div>
-
-        {/* RESULTS AREA */}
-        {status === "SAFE" && (
-          <div className="mt-6 pt-6 border-t border-white/10 flex items-start gap-4 animate-in fade-in slide-in-from-top-2">
-            <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-white font-bold text-lg">Safe to Install</h4>
-              <p className="text-slate-400 text-sm mt-1">
-                Protected by the EPA Indefinite Install Rule. This unit is classified as existing inventory.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {status === "RISK" && (
-          <div className="mt-6 pt-6 border-t border-white/10 flex items-start gap-4 animate-in fade-in slide-in-from-top-2">
-            <div className="p-2 bg-red-500/10 rounded-lg text-red-500">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-white font-bold text-lg">Risk Detected</h4>
-              <p className="text-slate-400 text-sm mt-1">
-                Unit manufactured post-ban. Installation may violate AIM Act Subsection H. Download waiver below.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
+import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2, Mail, MessageSquare } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white">
       
-      {/* 1. NAVBAR (Minimalist) */}
-      <nav className="fixed top-0 w-full z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 opacity-90 hover:opacity-100 transition-opacity">
+      {/* 1. NAVBAR */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          
+          <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-3">
             <TrueLogo className="w-8 h-8" />
-            <span className="text-xl font-bold tracking-tight">True608</span>
+            <div className="text-xl font-bold tracking-tight">
+              True<span className="text-blue-500">608</span>
+            </div>
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="hidden md:block text-sm font-medium text-slate-400 hover:text-white transition-colors">
+
+          <div className="flex gap-4">
+            <Link href="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors flex items-center">
               Admin Login
             </Link>
             <Link 
               href="/log" 
-              className="bg-white text-black px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wide hover:bg-slate-200 transition-colors"
+              className="bg-white text-black px-4 py-2 rounded-full text-xs font-bold hover:bg-slate-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]"
             >
               Launch App
             </Link>
@@ -99,85 +33,168 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* 2. HERO SECTION (Centered & Clean) */}
-      <div className="pt-40 pb-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* 2. HERO SECTION */}
+      <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
-          {/* BADGE */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-900/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-8">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            EPA Manufacturing Ban Live
+          {/* LEFT: THE PITCH */}
+          <div className="text-left">
+            
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/20 border border-red-800/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
+              <AlertTriangle className="w-3 h-3" />
+              Strict Enforcement Active
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500 leading-[1.1]">
+              Avoid <span className="text-red-500">crippling</span> <br/> EPA fines.
+            </h1>
+            
+            <p className="text-lg text-slate-400 mb-8 leading-relaxed max-w-xl">
+              Paper logs get lost. Spreadsheets get broken. 
+              <strong>True608</strong> is the digital fortress that tracks every ounce of refrigerant automatically.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link 
+                href="/log" 
+                className="h-12 px-8 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-lg shadow-blue-900/20"
+              >
+                Start Audit Defense <ArrowRight className="w-4 h-4" />
+              </Link>
+              
+              <Link 
+                href="/sales" 
+                className="h-12 px-8 rounded-full border border-slate-700 hover:border-slate-500 text-slate-300 font-medium flex items-center justify-center gap-2 transition-all hover:bg-white/5"
+              >
+                Book Demo
+              </Link>
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-white/5">
+              <p className="text-xs text-slate-600 font-bold uppercase tracking-widest mb-4">Engineered for compliance with</p>
+              <div className="flex gap-6 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="text-xl font-black tracking-tighter text-white">EPA<span className="font-light">608</span></div>
+                <div className="text-xl font-black tracking-tighter text-white">NATE</div>
+                <div className="text-xl font-black tracking-tighter text-white">OSHA</div>
+              </div>
+            </div>
           </div>
 
-          {/* HEADLINE */}
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tight mb-8 text-white leading-[1.1]">
-            Is your inventory <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-              Safe or Stranded?
-            </span>
-          </h1>
+          {/* RIGHT: THE VISUAL PROOF (Phone) */}
+          <div className="relative mx-auto lg:mx-0">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
+            
+            <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-24 bg-black rounded-b-xl z-20"></div>
+              
+              <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
+                <div className="text-center mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                     <TrueLogo className="w-6 h-6" />
+                     <div className="text-xl font-bold text-white">True<span className="text-blue-500">608</span></div>
+                  </div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-widest">Field Tool V1</div>
+                </div>
+                
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Job Site</div>
+                  <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white">
+                    123 Main St, Server Room
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Unit ID</div>
+                  <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white flex justify-between">
+                    <span>RTU-04</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  </div>
+                </div>
+                
+                <div className="mt-auto mb-6">
+                  <div className="h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-900/20">
+                    SECURE ENTRY
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          {/* SUBHEAD */}
-          <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-            The R-410A Ban is here. R-454B prices are surging. 
-            <strong>True608</strong> is the command center to verify compliance and track every ounce of refrigerant across your fleet.
+        </div>
+      </div>
+
+      {/* 3. FEATURES */}
+      <div className="max-w-7xl mx-auto px-6 py-20 border-t border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-colors group">
+            <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6 group-hover:bg-blue-500/20 transition-colors">
+              <Shield className="w-6 h-6 text-blue-500" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">Audit Proof</h3>
+            <p className="text-slate-400 leading-relaxed text-sm">
+              Every entry is timestamped, geotagged, and backed up. When the EPA knocks, you just print the PDF report.
+            </p>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-colors group">
+            <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+              <BarChart3 className="w-6 h-6 text-emerald-500" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">Leak Detection</h3>
+            <p className="text-slate-400 leading-relaxed text-sm">
+              Our algorithms spot high-usage units automatically. Fix leaks before they become fines.
+            </p>
+          </div>
+
+          <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-colors group">
+            <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-6 group-hover:bg-purple-500/20 transition-colors">
+              <Lock className="w-6 h-6 text-purple-500" />
+            </div>
+            <h3 className="text-xl font-bold mb-3 text-white">Bank-Grade Vault</h3>
+            <p className="text-slate-400 leading-relaxed text-sm">
+              Your data is encrypted at rest and in transit. Accessible only by you, from anywhere on Earth.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. CONTACT SECTION */}
+      <div className="max-w-4xl mx-auto px-6 pb-20">
+        <div className="bg-gradient-to-br from-blue-900/10 to-slate-900/10 border border-blue-500/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full -z-10"></div>
+          
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Questions? We are here.
+          </h2>
+          <p className="text-slate-400 mb-8 max-w-lg mx-auto">
+            Need help with enterprise deployment or custom integrations? Our engineering team is ready.
           </p>
-
-          {/* THE TOOL (Centered Anchor) */}
-          <ComplianceChecker />
-
-          {/* SECONDARY CTA */}
-          <div className="mt-12 flex items-center justify-center gap-2 text-sm text-slate-500">
-            <Link href="/sales" className="hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-0.5">
-              Need the 2026 Customer Letter? Download the Survival Kit.
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link 
+              href="mailto:support@true608.com"
+              className="px-8 py-3 rounded-xl bg-white text-black font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="w-4 h-4" /> Contact Support
             </Link>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-
-        </div>
-      </div>
-
-      {/* 3. VALUE PROPS (Grid) */}
-      <div className="max-w-6xl mx-auto px-6 py-24 border-t border-white/5">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Feature 1 */}
-          <div>
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-6 text-blue-500">
-              <Terminal className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Audit-Proof Logs</h3>
-            <p className="text-slate-400 leading-relaxed">
-              Every entry is timestamped, encrypted, and backed up. When the EPA knocks, you just hit print.
-            </p>
-          </div>
-          {/* Feature 2 */}
-          <div>
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-6 text-emerald-500">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Leak Detection</h3>
-            <p className="text-slate-400 leading-relaxed">
-              Our algorithms spot high-usage units automatically. Fix leaks before they become 15lb fines.
-            </p>
-          </div>
-          {/* Feature 3 */}
-          <div>
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-6 text-purple-500">
-              <Check className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">Inventory Defense</h3>
-            <p className="text-slate-400 leading-relaxed">
-              Know exactly which units are safe to install under the new AIM Act rules vs. which are stranded assets.
-            </p>
+            
+            <Link 
+              href="/sales"
+              className="px-8 py-3 rounded-xl bg-black border border-slate-700 text-white font-medium hover:bg-slate-900 transition-all flex items-center justify-center gap-2"
+            >
+              <Mail className="w-4 h-4" /> Contact Sales
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 4. FOOTER */}
-      <footer className="py-12 text-center border-t border-white/5">
-        <p className="text-slate-600 text-xs uppercase tracking-widest">
-          &copy; 2025 True608 Systems.
+      <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
+        <p className="text-slate-600 text-sm">
+          &copy; 2025 True608 Systems. All rights reserved.
         </p>
+        <div className="flex justify-center gap-6 mt-4 text-xs text-slate-600 font-medium">
+            <Link href="/privacy" className="hover:text-slate-400">Privacy</Link>
+            <Link href="/terms" className="hover:text-slate-400">Terms</Link>
+        </div>
       </footer>
 
     </main>

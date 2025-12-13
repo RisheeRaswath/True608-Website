@@ -3,61 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #0f172a; /* Deep Slate */
-  --foreground: #e2e8f0; /* Gray-200 */
+  --background: #050505;
+  --foreground: #ffffff;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  overflow-x: hidden;
-}
-
-/* TACTICAL UTILITIES */
-.font-mono-tactical {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  letter-spacing: -0.05em;
-}
-
-/* TICKER ANIMATION */
-.ticker-wrap {
-  width: 100%;
-  overflow: hidden;
-  background-color: #000;
-  padding-left: 100%; 
-  box-sizing: content-box;
-}
-
-.ticker-move {
-  display: inline-block;
-  white-space: nowrap;
-  padding-right: 100%;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-name: ticker;
-  animation-duration: 30s;
-}
-
-.ticker-item {
-  display: inline-block;
-  padding: 0 2rem;
-  font-family: ui-monospace, monospace;
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #22c55e; /* Signal Green */
-  text-transform: uppercase;
-}
-
-@keyframes ticker {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-100%, 0, 0); }
-}
-
-/* GLOW EFFECTS */
-.neon-border-green {
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
-}
-.neon-border-red {
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+  font-family: Arial, Helvetica, sans-serif;
 }
