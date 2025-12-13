@@ -19,14 +19,14 @@ body {
 /* --- THE TICKER ANIMATION --- */
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* Changed to -50% for smoother loop */
+  100% { transform: translateX(-50%); } 
 }
 
 .animate-ticker {
   display: flex;
   white-space: nowrap;
-  animation: scroll 60s linear infinite; /* Slower, more readable */
-  width: max-content; /* Ensures it flows correctly */
+  animation: scroll 60s linear infinite; 
+  width: max-content; 
 }
 
 .animate-ticker:hover {
@@ -43,7 +43,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #1e293b; 
   border-radius: 5px;
-  border: 2px solid #0B0F19;
+  border: 1px solid #0B0F19;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #334155; 
