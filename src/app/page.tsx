@@ -6,7 +6,7 @@ import { ArrowRight, Shield, BarChart3, Lock, AlertTriangle, CheckCircle2, Mail,
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white">
+    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white overflow-x-hidden">
       
       {/* 1. NAVBAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
@@ -38,13 +38,15 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
           {/* LEFT: THE PITCH */}
-          <div className="text-left">
+          <div className="text-left z-10">
             
+            {/* The Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/20 border border-red-800/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-6 animate-pulse">
               <AlertTriangle className="w-3 h-3" />
               Strict Enforcement Active
             </div>
             
+            {/* The Headline */}
             <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-500 leading-[1.1]">
               Avoid <span className="text-red-500">crippling</span> <br/> EPA fines.
             </h1>
@@ -80,13 +82,16 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT: THE VISUAL PROOF (Phone) */}
-          <div className="relative mx-auto lg:mx-0">
+          {/* RIGHT: THE VISUAL PROOF (The Phone) */}
+          <div className="relative mx-auto lg:mx-0 w-full flex justify-center lg:justify-end">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] -z-10"></div>
             
-            <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
+            {/* Phone Container */}
+            <div className="relative w-[300px] h-[600px] bg-[#0a0a0a] border-[8px] border-[#2a2a2a] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col transform hover:scale-[1.02] transition-transform duration-500">
+              {/* Notch */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-24 bg-black rounded-b-xl z-20"></div>
               
+              {/* Screen Content */}
               <div className="flex-1 bg-[#0F1117] p-4 pt-10 flex flex-col gap-4">
                 <div className="text-center mb-4">
                   <div className="flex items-center justify-center gap-2 mb-1">
@@ -96,21 +101,33 @@ export default function LandingPage() {
                   <div className="text-[10px] text-slate-500 uppercase tracking-widest">Field Tool V1</div>
                 </div>
                 
-                <div>
+                {/* Mock Card 1 */}
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
                   <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Job Site</div>
                   <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white">
                     123 Main St, Server Room
                   </div>
                 </div>
-                <div>
+
+                {/* Mock Card 2 */}
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                   <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Unit ID</div>
                   <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white flex justify-between">
                     <span>RTU-04</span>
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   </div>
                 </div>
+
+                {/* Mock Card 3 (Refrigerant) */}
+                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                  <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Refrigerant Added</div>
+                  <div className="h-10 bg-[#1A1D24] rounded-lg border border-slate-800 flex items-center px-3 text-sm text-white flex justify-between">
+                    <span>R-410A (3.5 lbs)</span>
+                  </div>
+                </div>
                 
-                <div className="mt-auto mb-6">
+                {/* Big Button */}
+                <div className="mt-auto mb-6 animate-in fade-in zoom-in duration-500 delay-700">
                   <div className="h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-900/20">
                     SECURE ENTRY
                   </div>
@@ -157,7 +174,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* 4. CONTACT SECTION */}
+      {/* 4. CONTACT SECTION (The Glassmorphic Card) */}
       <div className="max-w-4xl mx-auto px-6 pb-20">
         <div className="bg-gradient-to-br from-blue-900/10 to-slate-900/10 border border-blue-500/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full -z-10"></div>
@@ -187,6 +204,7 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* 5. FOOTER */}
       <footer className="border-t border-white/5 py-12 text-center bg-[#0a0a0a]">
         <p className="text-slate-600 text-sm">
           &copy; 2025 True608 Systems. All rights reserved.
