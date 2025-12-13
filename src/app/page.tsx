@@ -3,30 +3,47 @@
 import { useState, useEffect } from "react";
 import { TrueLogo } from "@/components/TrueLogo"; 
 import { 
-  ShieldCheck, AlertTriangle, Activity, 
-  Lock, Server, FileText, ChevronRight, Search, Globe
+  ShieldCheck, AlertTriangle, Terminal, Activity, 
+  Lock, Server, FileText, ChevronRight, Search, Globe, MapPin
 } from "lucide-react";
 
-// --- 1. THE TICKER (Solid Black, Readable) ---
-const Ticker = () => (
-  // z-[60] ensures it is ALWAYS on top. bg-black ensures text is readable.
-  <div className="w-full bg-black border-b border-white/10 h-10 flex items-center overflow-hidden z-[60] fixed top-0 left-0 shadow-xl">
-    <div className="animate-ticker flex items-center">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="flex items-center">
-          <span className="text-[10px] md:text-xs font-mono font-bold tracking-widest uppercase flex items-center gap-24 px-12">
-            <span className="text-slate-300">R-410A SPOT: <span className="text-[#00FF94]">$425.00 ▲</span></span>
-            <span className="text-slate-300">R-454B SUPPLY: <span className="text-[#FF3333]">CRITICAL LOW ▼</span></span>
-            <span className="text-slate-300">AIM ACT ENFORCEMENT: <span className="text-[#FF3333]">ACTIVE</span></span>
-            <span className="text-slate-300">EPA AUDIT RISK: <span className="text-[#FACC15]">ELEVATED</span></span>
-          </span>
-        </div>
-      ))}
+// --- 1. UNIFIED HEADER (Ticker + Nav) ---
+const Header = () => (
+  <header className="fixed top-0 w-full z-50 bg-[#0B0F19] shadow-2xl border-b border-white/5">
+    
+    {/* A. TICKER BAR (Solid Background) */}
+    <div className="w-full h-10 flex items-center overflow-hidden border-b border-white/5 bg-[#05070a] relative z-50">
+      <div className="animate-ticker flex items-center">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="flex items-center">
+            <span className="text-[10px] font-mono font-bold tracking-widest uppercase flex items-center gap-24 px-12">
+              <span className="text-slate-400">R-410A SPOT: <span className="text-[#00FF94]">$425.00 ▲</span></span>
+              <span className="text-slate-400">R-454B SUPPLY: <span className="text-[#FF3333]">CRITICAL LOW ▼</span></span>
+              <span className="text-slate-400">AIM ACT ENFORCEMENT: <span className="text-[#FF3333]">ACTIVE</span></span>
+              <span className="text-slate-400">EPA AUDIT RISK: <span className="text-[#FACC15]">ELEVATED</span></span>
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
+
+    {/* B. NAVBAR (Locked underneath) */}
+    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
+        <TrueLogo className="w-9 h-9" />
+        <div className="flex flex-col">
+            <span className="text-xl font-bold tracking-tight text-white leading-none">True608</span>
+            <span className="text-[10px] text-slate-500 font-mono tracking-[0.3em] uppercase mt-1">Intelligence</span>
+        </div>
+      </div>
+      <button className="flex items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest cursor-pointer transition-all border border-white/10 hover:border-white/40 px-5 py-2.5 rounded bg-white/5 hover:bg-white/10 active:scale-95">
+          <Lock className="w-3 h-3 text-[#00FF94]" /> Encrypted Login
+      </button>
+    </div>
+  </header>
 );
 
-// --- 2. THE COUNTDOWN (Perfectly Sized) ---
+// --- 2. THE COUNTDOWN (With Seconds) ---
 const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
@@ -46,33 +63,46 @@ const Countdown = () => {
   }, []);
 
   return (
-    <div className="text-center mb-20 relative z-10">
-      <div className="inline-flex items-center gap-2 border border-[#FF3333]/30 bg-[#FF3333]/5 px-4 py-1.5 rounded text-[#FF3333] text-[10px] font-bold uppercase tracking-[0.2em] mb-10 animate-pulse shadow-[0_0_15px_rgba(255,51,51,0.1)]">
-        <AlertTriangle className="w-3 h-3" /> Supply Chain Crunch
+    <div className="text-center mb-24 relative z-10">
+      <div className="inline-flex items-center gap-2 border border-[#FF3333] bg-[#FF3333]/10 px-5 py-2 rounded-full text-[#FF3333] text-xs font-bold uppercase tracking-[0.2em] mb-12 shadow-[0_0_20px_rgba(255,51,51,0.2)]">
+        <AlertTriangle className="w-4 h-4" /> Supply Chain Crunch
       </div>
       
-      {/* Sized to be big but readable */}
-      <div className="font-mono text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter flex justify-center items-baseline gap-4 md:gap-8 leading-none">
+      {/* 4 COLUMNS FOR DAYS / HRS / MIN / SEC */}
+      <div className="flex justify-center gap-4 md:gap-12 font-mono text-white">
+        
         <div className="flex flex-col items-center">
-            {timeLeft.d}
-            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-4">DAYS</span>
+            <div className="text-5xl md:text-8xl font-black tracking-tighter">{timeLeft.d}</div>
+            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-2">DAYS</span>
         </div>
-        <span className="text-slate-800 self-start mt-2 opacity-50">:</span>
+
+        <div className="text-4xl md:text-7xl text-slate-700 font-light mt-2">:</div>
+
         <div className="flex flex-col items-center">
-            {timeLeft.h}
-            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-4">HRS</span>
+            <div className="text-5xl md:text-8xl font-black tracking-tighter">{timeLeft.h}</div>
+            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-2">HRS</span>
         </div>
-        <span className="text-slate-800 self-start mt-2 opacity-50">:</span>
+
+        <div className="text-4xl md:text-7xl text-slate-700 font-light mt-2">:</div>
+
         <div className="flex flex-col items-center">
-            {timeLeft.m}
-            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-4">MIN</span>
+            <div className="text-5xl md:text-8xl font-black tracking-tighter">{timeLeft.m}</div>
+            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-2">MIN</span>
         </div>
+
+        <div className="text-4xl md:text-7xl text-slate-700 font-light mt-2">:</div>
+
+        <div className="flex flex-col items-center">
+            <div className="text-5xl md:text-8xl font-black tracking-tighter">{timeLeft.s}</div>
+            <span className="text-[10px] md:text-sm text-slate-500 font-sans font-bold tracking-[0.3em] opacity-60 mt-2">SEC</span>
+        </div>
+
       </div>
     </div>
   );
 };
 
-// --- 3. THE SCANNER (Corrected Padding & Text) ---
+// --- 3. THE SCANNER ---
 const Scanner = () => {
   const [year, setYear] = useState("");
   const [result, setResult] = useState<null | "SAFE" | "RISK">(null);
@@ -86,10 +116,10 @@ const Scanner = () => {
   return (
     <div className="w-full max-w-[420px] mx-auto relative group z-20">
       
-      {/* Header - No weird symbols */}
+      {/* Header */}
       <div className="flex justify-between items-center mb-4 px-2">
         <h3 className="text-slate-300 font-bold flex items-center gap-2 text-xs tracking-[0.2em] uppercase">
-          Condenser Verification
+          <Terminal className="w-4 h-4 text-blue-500" /> Condenser Verification
         </h3>
         <div className="flex gap-2 items-center bg-white/5 px-3 py-1 rounded-full border border-white/10">
              <div className="w-1.5 h-1.5 rounded-full bg-[#00FF94] animate-pulse"></div>
@@ -97,13 +127,12 @@ const Scanner = () => {
         </div>
       </div>
 
-      {/* Input Field */}
+      {/* Input Field - Fixed Padding */}
       <div className="relative mb-8 shadow-2xl">
         <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none z-20">
-          <Search className="h-5 w-5 text-slate-500" />
+          <Search className="h-5 w-5 text-slate-400" />
         </div>
         <div className="flex gap-0 relative">
-             {/* PL-16 creates massive space so text doesn't touch icon */}
              <input 
               type="number"
               placeholder="Enter Mfg Year..."
@@ -155,56 +184,75 @@ const Scanner = () => {
   );
 };
 
-// --- 4. THE MAP VISUAL (ACTUAL US MAP SVG) ---
+// --- 4. THE MAP (Google Maps Style / Satellite View) ---
 const WarRoomMap = () => (
-  <div className="mt-40 border-t border-white/10 pt-20 bg-gradient-to-b from-[#0B0F19] to-black">
+  <div className="mt-48 border-t border-white/10 pt-20 bg-[#0B0F19]">
     <div className="flex flex-col md:flex-row justify-between items-end mb-10 max-w-7xl mx-auto px-6 gap-6">
       <div>
         <h4 className="text-white font-bold flex items-center gap-3 text-2xl">
-          <Globe className="w-6 h-6 text-blue-500" /> True608 Intelligence
+          <Globe className="w-6 h-6 text-blue-500" /> True608 Intelligence Network
         </h4>
-        <p className="text-sm text-slate-400 mt-2 font-mono tracking-wide">LIVE COMPLIANCE FEED</p>
+        <p className="text-sm text-slate-400 mt-2 font-mono tracking-wide">LIVE R-410A INVENTORY TRACKING</p>
       </div>
       <div className="flex items-center gap-3 px-5 py-2 bg-[#00FF94]/10 rounded-full border border-[#00FF94]/30">
         <div className="w-2.5 h-2.5 bg-[#00FF94] rounded-full animate-pulse shadow-[0_0_15px_#00FF94]"></div>
-        <span className="text-xs font-mono font-bold text-[#00FF94] tracking-widest">SYSTEM ONLINE</span>
+        <span className="text-xs font-mono font-bold text-[#00FF94] tracking-widest">SATELLITE LINK ACTIVE</span>
       </div>
     </div>
     
-    <div className="max-w-7xl mx-auto h-[500px] bg-[#111623] border border-white/10 rounded-3xl relative overflow-hidden shadow-2xl flex items-center justify-center">
+    {/* MAP CONTAINER */}
+    <div className="max-w-7xl mx-auto h-[600px] bg-[#05070a] border border-white/10 rounded-3xl relative overflow-hidden shadow-2xl flex items-center justify-center group">
       
-      {/* MAP SVG */}
-      <svg viewBox="0 0 1000 600" className="w-[80%] h-auto opacity-30 stroke-slate-600 fill-[#1e293b]">
-         {/* Simplified US Map Path */}
-         <path d="M968.1,234.3l-12.8,11.6l-36.1,2.8l-5.6-11.2l-22.3,0l-16.7,11.2l-16.7-5.6l-2.8,16.7l-13.9,0l-19.5,19.5l-5.6,22.3
-         l13.9,25.1l-22.3,8.4l-11.2,30.7l-30.7,13.9l-25.1-5.6l-13.9,13.9l-44.6-2.8l-16.7,16.7l-13.9-2.8l-19.5,8.4l-11.2,27.9l-30.7-5.6
-         l-25.1,16.7l-8.4,19.5l-33.5,8.4l-13.9,19.5l-33.5,5.6l-13.9-8.4l-25.1,11.2l-5.6,19.5l-22.3,13.9l-13.9-2.8l-8.4,11.2l-41.8-8.4
-         l-25.1,11.2l-13.9-5.6l-19.5,8.4l-16.7-5.6l-27.9,8.4l-16.7-8.4l-11.2,8.4l-19.5-2.8l-5.6,11.2l-19.5-2.8l-11.2,11.2l-25.1,0
-         l-11.2-13.9l-30.7-2.8l-13.9,8.4l-19.5-5.6l-16.7,8.4l-16.7-5.6l-2.8-16.7l-13.9-5.6l-11.2,2.8l-19.5-5.6l-5.6-25.1l-25.1-13.9
-         l-2.8-22.3l-19.5-16.7l-22.3-2.8l-8.4-19.5l8.4-25.1l-5.6-19.5l-19.5-11.2l-2.8-22.3l13.9-19.5l2.8-22.3l-13.9-13.9l8.4-19.5
-         l25.1-11.2l16.7-30.7l30.7-16.7l13.9,2.8l16.7-11.2l22.3,2.8l16.7-8.4l11.2,2.8l30.7-13.9l19.5,5.6l16.7-11.2l27.9,2.8l16.7-13.9
-         l19.5,5.6l16.7-5.6l22.3,13.9l25.1-2.8l22.3-13.9l30.7,5.6l16.7-5.6l25.1,8.4l19.5-8.4l27.9,2.8l16.7-11.2l25.1,5.6l16.7-8.4
-         l30.7,2.8l22.3-11.2l16.7,5.6l27.9-8.4l19.5,5.6l25.1-8.4l22.3,5.6l16.7-8.4l25.1,2.8l13.9-11.2l19.5,5.6l16.7-5.6l27.9,5.6
-         l19.5-8.4l16.7,5.6l25.1-5.6l13.9,8.4l19.5-5.6l25.1,5.6l16.7-2.8l11.2,8.4l30.7-5.6l13.9,5.6l25.1-5.6l16.7,5.6l22.3-8.4
-         l16.7,2.8l11.2-8.4l19.5,5.6l16.7-2.8L968.1,234.3z"/>
-      </svg>
+      {/* 1. SATELLITE GRID BACKGROUND */}
+      <div className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/US_map_outline.svg/1200px-US_map_outline.svg.png')] bg-contain bg-center bg-no-repeat opacity-20 invert hue-rotate-180 grayscale"></div>
       
-      {/* Glowing Dots on the Map */}
-      <div className="absolute top-[30%] left-[20%] w-2 h-2 bg-blue-500 rounded-full animate-ping opacity-100 shadow-[0_0_30px_blue]"></div>
-      <div className="absolute top-[45%] left-[75%] w-3 h-3 bg-[#00FF94] rounded-full animate-ping delay-75 opacity-100 shadow-[0_0_40px_#00FF94]"></div>
-      <div className="absolute top-[60%] left-[45%] w-2 h-2 bg-purple-500 rounded-full animate-ping delay-150 opacity-100 shadow-[0_0_30px_purple]"></div>
-      <div className="absolute top-[35%] right-[10%] w-2 h-2 bg-yellow-500 rounded-full animate-ping delay-300 opacity-100 shadow-[0_0_30px_yellow]"></div>
-
-      {/* Radar Sweep Effect */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent animate-scan pointer-events-none h-[20%] w-full"></div>
-      
-      {/* Center Text */}
-      <div className="relative z-10 text-center bg-[#0B0F19] px-12 py-8 rounded-2xl border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-         <p className="text-xs font-mono text-slate-400 tracking-[0.3em] mb-4 uppercase">Secure Connection</p>
-         <h2 className="text-3xl font-bold text-white tracking-tight flex items-center justify-center gap-4">
-            <Lock className="w-6 h-6 text-[#00FF94]" /> LIVE DATA STREAM
-         </h2>
+      {/* 2. OVERLAY GRID */}
+      <div className="absolute inset-0 grid grid-cols-[repeat(20,minmax(0,1fr))] gap-px opacity-10 pointer-events-none">
+         {[...Array(400)].map((_, i) => (
+           <div key={i} className="border border-blue-500/20"></div>
+         ))}
       </div>
+
+      {/* 3. LIVE HOTSPOTS (Locations) */}
+      
+      {/* PHOENIX (HVAC Capital) */}
+      <div className="absolute top-[55%] left-[20%] group cursor-pointer">
+         <div className="w-3 h-3 bg-[#00FF94] rounded-full animate-ping opacity-75 absolute"></div>
+         <div className="w-3 h-3 bg-[#00FF94] rounded-full relative shadow-[0_0_20px_#00FF94]"></div>
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#00FF94]/50 text-[10px] text-[#00FF94] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            PHOENIX: 84 UNITS
+         </div>
+      </div>
+
+      {/* TEXAS (Houston) */}
+      <div className="absolute top-[75%] left-[45%] group cursor-pointer">
+         <div className="w-3 h-3 bg-[#FF3333] rounded-full animate-ping opacity-75 absolute"></div>
+         <div className="w-3 h-3 bg-[#FF3333] rounded-full relative shadow-[0_0_20px_#FF3333]"></div>
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FF3333]/50 text-[10px] text-[#FF3333] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            HOUSTON: CRITICAL LOW
+         </div>
+      </div>
+
+      {/* NEW YORK */}
+      <div className="absolute top-[35%] right-[15%] group cursor-pointer">
+         <div className="w-3 h-3 bg-blue-500 rounded-full animate-ping opacity-75 absolute"></div>
+         <div className="w-3 h-3 bg-blue-500 rounded-full relative shadow-[0_0_20px_blue]"></div>
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-blue-500/50 text-[10px] text-blue-500 font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            NYC: 120 UNITS
+         </div>
+      </div>
+
+       {/* MIAMI */}
+       <div className="absolute top-[85%] right-[18%] group cursor-pointer">
+         <div className="w-3 h-3 bg-[#FACC15] rounded-full animate-ping opacity-75 absolute"></div>
+         <div className="w-3 h-3 bg-[#FACC15] rounded-full relative shadow-[0_0_20px_#FACC15]"></div>
+         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/80 px-3 py-1 rounded border border-[#FACC15]/50 text-[10px] text-[#FACC15] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            MIAMI: AUDIT ACTIVE
+         </div>
+      </div>
+
+      {/* RADAR SWEEP */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent w-[50%] h-full animate-[spin_4s_linear_infinite] opacity-30 pointer-events-none rounded-full blur-3xl transform scale-150"></div>
     </div>
   </div>
 );
@@ -212,28 +260,12 @@ const WarRoomMap = () => (
 // --- MAIN LAYOUT ---
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#0B0F19] text-white selection:bg-[#00FF94] selection:text-black font-sans pb-20 pt-10 relative">
+    <main className="min-h-screen bg-[#0B0F19] text-white selection:bg-[#00FF94] selection:text-black font-sans pb-20 relative">
       
-      <Ticker />
+      {/* UNIFIED HEADER (Replaces Ticker + Nav) */}
+      <Header />
 
-      {/* NAV - STICKY at 40px (top-10) to match ticker height */}
-      <nav className="fixed top-10 w-full z-50 bg-[#0B0F19]/90 backdrop-blur-xl border-b border-white/5 transition-all">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
-            <TrueLogo className="w-10 h-10" />
-            <div className="flex flex-col">
-               <span className="text-2xl font-bold tracking-tight text-white leading-none">True608</span>
-               <span className="text-[10px] text-slate-400 font-mono tracking-[0.3em] uppercase mt-1">Intelligence</span>
-            </div>
-          </div>
-          {/* LOGIN BUTTON */}
-          <button className="group flex items-center gap-3 text-[10px] font-bold text-slate-400 hover:text-white uppercase tracking-widest cursor-pointer transition-all border border-white/10 hover:border-white/40 px-6 py-3 rounded-lg bg-white/5 hover:bg-white/10 active:scale-95 shadow-lg">
-             <Lock className="w-3 h-3 group-hover:text-[#00FF94] transition-colors" /> Encrypted Login
-          </button>
-        </div>
-      </nav>
-
-      {/* HERO SECTION */}
+      {/* HERO SECTION - Padded for Header */}
       <div className="pt-48 px-6 relative z-10"> 
         <div className="max-w-7xl mx-auto text-center">
           

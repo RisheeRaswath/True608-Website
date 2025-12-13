@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #0B0F19;
+  --background: #0B0F19; /* Deep Slate */
   --foreground: #F8FAFC;
 }
 
@@ -13,7 +13,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden; 
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* --- THE TICKER ANIMATION --- */
@@ -25,26 +24,10 @@ body {
 .animate-ticker {
   display: flex;
   white-space: nowrap;
-  animation: scroll 60s linear infinite; 
+  animation: scroll 40s linear infinite; /* Adjusted speed */
   width: max-content; 
 }
 
 .animate-ticker:hover {
   animation-play-state: paused;
-}
-
-/* --- TACTICAL SCROLLBAR --- */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #0B0F19; 
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b; 
-  border-radius: 5px;
-  border: 1px solid #0B0F19;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155; 
 }
